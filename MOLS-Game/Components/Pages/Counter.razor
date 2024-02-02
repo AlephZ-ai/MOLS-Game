@@ -2,6 +2,8 @@
 @rendermode InteractiveServer
 @using System
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+
 
 
 <h3>The MOLS Puzzle Game</h3>
@@ -15,17 +17,11 @@
             </div>
         }
     </div>
-    <div style="display: flex; flex-direction: column; align-items:center; gap:20px">
-        <div class="control-panel" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-            <button class="btn btn-outline-primary" @onclick="MoveUp">Up</button>
-            <button class="btn btn-outline-primary" @onclick="MoveDown">Down</button>
-        </div>
-
-        <div class="control-panel" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-            <button class="btn btn-outline-primary" @onclick="MoveLeft">Left</button>
-            <button class="btn btn-outline-primary" @onclick="MoveRight">Right</button>
-        </div>
-    </div>
+<div style="display: flex; flex-direction: column; align-items:center; gap:20px">
+    
+      <button class="btn btn-outline-primary" @onkeydown="KeyDown">Press to Use Arrow Keys</button>
+        
+</div>
     
 
 </div>
@@ -56,7 +52,14 @@
         tiles[15] = ""; // The empty space
     }
 
-    private void MoveUp(MouseEventArgs args)
+    //<button class="btn btn-outline-primary" @onclick="GoToPermutations">Check If Playable</button>
+    // will use routing to send the tile info to the permutations and then a button on permutations to send it back
+    private void GoToPermutations()
+    {
+        NavManager.NavigateTo("/Permutations");
+    }
+
+    private void MoveUp()
     {
         // Implement logic to move the empty space up, if possible
         if (emptyIndex > 3) // Check if not in the top row
@@ -66,7 +69,7 @@
 
     }
 
-    private void MoveDown(MouseEventArgs args)
+    private void MoveDown()
     {
         // Implement logic to move the empty space down, if possible
         if (emptyIndex < 12) // Check if not in the bottom row
@@ -75,10 +78,10 @@
         }
     }
 
-    private void MoveLeft(MouseEventArgs args)
+    private void MoveLeft()
     {
         //Console.WriteLine("test");
-        
+
 
         //Console.WriteLine("tried to move left {emptyIndex} ");
         // Implement logic to move the empty space left, if possible
@@ -88,7 +91,7 @@
         }
     }
 
-    private void MoveRight(MouseEventArgs args)
+    private void MoveRight()
     {
         // Implement logic to move the empty space right, if possible
         if (emptyIndex % 4 != 3) // Check if not in the last column
@@ -106,9 +109,28 @@
 
         //foreach(string t in tiles)
         //{
-          //  Console.WriteLine(t);
+        //  Console.WriteLine(t);
         //}
 
         StateHasChanged(); // Re-render the component
     }
+
+    private void KeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        if(args.Key == "ArrowDown")
+        {
+            MoveDown();
+        } else if(args.Key == "ArrowUp")
+        {
+            MoveUp();
+        } else if(args.Key == "ArrowLeft")
+        {
+            MoveLeft();
+        } else if(args.Key == "ArrowRight")
+        {
+            MoveRight();
+        }
+    }
+
+   
 }
