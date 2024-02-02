@@ -1,0 +1,114 @@
+﻿@page "/Counter"
+@rendermode InteractiveServer
+@using System
+@inject IJSRuntime JSRuntime
+
+
+<h3>The MOLS Puzzle Game</h3>
+
+<div style="display: flex; align-items: start; gap: 20px;">
+    <div class="puzzle-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
+        @for (int i = 0; i < 16; i++)
+        {
+            <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black;">
+                @tiles[i]
+            </div>
+        }
+    </div>
+    <div style="display: flex; flex-direction: column; align-items:center; gap:20px">
+        <div class="control-panel" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <button class="btn btn-outline-primary" @onclick="MoveUp">Up</button>
+            <button class="btn btn-outline-primary" @onclick="MoveDown">Down</button>
+        </div>
+
+        <div class="control-panel" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <button class="btn btn-outline-primary" @onclick="MoveLeft">Left</button>
+            <button class="btn btn-outline-primary" @onclick="MoveRight">Right</button>
+        </div>
+    </div>
+    
+
+</div>
+
+@code {
+    private string[] tiles = new string[16];
+    private int emptyIndex = 15; // Assuming the empty space starts at the bottom right
+
+    protected override void OnInitialized()
+    {
+        InitializeGame();
+    }
+
+
+    private void InitializeGame()
+    {
+        for (int i = 0; i < 15; i++)
+        {
+            if (i < 9)
+            {
+                tiles[i] = "0" + (i + 1).ToString();
+            }
+            else
+            {
+                tiles[i] = (i + 1).ToString();
+            }
+        }
+        tiles[15] = ""; // The empty space
+    }
+
+    private void MoveUp(MouseEventArgs args)
+    {
+        // Implement logic to move the empty space up, if possible
+        if (emptyIndex > 3) // Check if not in the top row
+        {
+            SwapTiles(emptyIndex, emptyIndex - 4);
+        }
+
+    }
+
+    private void MoveDown(MouseEventArgs args)
+    {
+        // Implement logic to move the empty space down, if possible
+        if (emptyIndex < 12) // Check if not in the bottom row
+        {
+            SwapTiles(emptyIndex, emptyIndex + 4);
+        }
+    }
+
+    private void MoveLeft(MouseEventArgs args)
+    {
+        //Console.WriteLine("test");
+        
+
+        //Console.WriteLine("tried to move left {emptyIndex} ");
+        // Implement logic to move the empty space left, if possible
+        if (emptyIndex % 4 != 0) // Check if not in the first column
+        {
+            SwapTiles(emptyIndex, emptyIndex - 1);
+        }
+    }
+
+    private void MoveRight(MouseEventArgs args)
+    {
+        // Implement logic to move the empty space right, if possible
+        if (emptyIndex % 4 != 3) // Check if not in the last column
+        {
+            SwapTiles(emptyIndex, emptyIndex + 1);
+        }
+    }
+
+    private void SwapTiles(int index1, int index2)
+    {
+        var temp = tiles[index1];
+        tiles[index1] = tiles[index2];
+        tiles[index2] = temp;
+        emptyIndex = index2; // Update the empty space index
+
+        //foreach(string t in tiles)
+        //{
+          //  Console.WriteLine(t);
+        //}
+
+        StateHasChanged(); // Re-render the component
+    }
+}
