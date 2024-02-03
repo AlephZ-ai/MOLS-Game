@@ -20,7 +20,7 @@
 <div style="display: flex; flex-direction: column; align-items:center; gap:20px">
     
       <button class="btn btn-outline-primary" @onkeydown="KeyDown">Press to Use Arrow Keys</button>
-        
+        <a href="/Permutations/@tableInfo/@emptyIndex" class="btn btn-outline-primary">Get Closest Permutations</a>
 </div>
     
 
@@ -28,7 +28,9 @@
 
 @code {
     private string[] tiles = new string[16];
+    public string tableInfo = "010203040506070809101112131415__"; // turn into starting permutation every time.
     private int emptyIndex = 15; // Assuming the empty space starts at the bottom right
+
 
     protected override void OnInitialized()
     {
@@ -49,15 +51,10 @@
                 tiles[i] = (i + 1).ToString();
             }
         }
-        tiles[15] = ""; // The empty space
+        tiles[15] = "__"; // The empty space
     }
 
-    //<button class="btn btn-outline-primary" @onclick="GoToPermutations">Check If Playable</button>
-    // will use routing to send the tile info to the permutations and then a button on permutations to send it back
-    private void GoToPermutations()
-    {
-        NavManager.NavigateTo("/Permutations");
-    }
+
 
     private void MoveUp()
     {
@@ -112,6 +109,11 @@
         //  Console.WriteLine(t);
         //}
 
+        tableInfo = "";
+        foreach(string t in tiles)
+        {
+            tableInfo += t;
+        }
         StateHasChanged(); // Re-render the component
     }
 

@@ -1,11 +1,67 @@
 ﻿@page "/Permutations"
+@page "/Permutations/{tableInfo?}/{emptyIndex?}"
 
-    <h3>Permutations</h3>
+
+    <h3 style="text-align: center">Permutations</h3>
 
 
+
+<div style="display: flex; justify-content: center">
+    <div style="display: flex; align-items: start; gap: 20px;">
+        <div class="puzzle-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
+            @for (int i = 0; i < 16; i++)
+            {
+                <div style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: 1px solid black;">
+                    @tiles[i]
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
 
 
 @code {
+    private string[] tiles = new string[16]; 
+
+    [Parameter]
+    public string tableInfo { get; set; }
+
+    [Parameter]
+    public string emptyIndex { get; set; }
+
+    protected override void OnInitialized()
+    {
+        InitializeGame();
+    }
+
+
+    private void InitializeGame()
+    {
+
+        tiles = SplitStringIntoChunks(tableInfo, 2);
+       // tiles[15] = ""; // The empty space
+    }
+
+    private string[] SplitStringIntoChunks(string str, int chunkSize)
+    {
+        if (string.IsNullOrEmpty(str) || chunkSize <= 0)
+        {
+            throw new ArgumentException("String is null or empty, or chunk size is invalid.");
+        }
+
+        int arraySize = (int)Math.Ceiling((double)str.Length / chunkSize);
+        string[] chunks = new string[arraySize];
+
+        for (int i = 0, j = 0; i < str.Length; i += chunkSize, j++)
+        {
+            if (i + chunkSize > str.Length)
+                chunks[j] = str.Substring(i);
+            else
+                chunks[j] = str.Substring(i, chunkSize);
+        }
+
+        return chunks;
+    }
 
 }
