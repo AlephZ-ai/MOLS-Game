@@ -2,22 +2,36 @@
 {
     public class MOLSNode
 {
-        private string[] tiles = new string[16];
-        
+        private string[] tiles;
+
         private MOLSNode? down = null;
         private MOLSNode? up = null;
         private MOLSNode? left = null;
         private MOLSNode? right = null;
         private MOLSNode? parent = null;
+        private bool isMOLS = false;
+        private string path = "";
 
 
         public MOLSNode(string[] tiles)
-            {
-                this.tiles=tiles;
-            }
+        {
+            this.tiles = tiles;
+            isMOLS = TileEditor.CheckIfMOLS(tiles);
+        }
 
+        public MOLSNode(string[] tiles, string step)
+        {
+            this.tiles = tiles;
+            isMOLS = TileEditor.CheckIfMOLS(tiles);
+            path = path + step;
+        }
 
-       
+        public bool IsMOLS() { return isMOLS; }
+
+       public string GetPath()
+        {
+            return path;
+        }
 
         public string[] GetTiles()
         {

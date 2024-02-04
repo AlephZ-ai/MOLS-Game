@@ -1,4 +1,6 @@
 ﻿using static System.Runtime.InteropServices.Marshalling.IIUnknownCacheStrategy;
+using System;
+using System.Collections.Generic;
 
 namespace MOLS_Game.TreeClasses
 {
@@ -41,7 +43,7 @@ namespace MOLS_Game.TreeClasses
 
             if (emptyIndex % 4 != 3) // Check if not in the last column
             {
-                SwapTiles1(tiles, emptyIndex, emptyIndex + 1);
+                return SwapTiles1(tiles, emptyIndex, emptyIndex + 1);
             }
 
             return null;
@@ -61,7 +63,7 @@ namespace MOLS_Game.TreeClasses
 
             if (emptyIndex % 4 != 0) // Check if not in the first column
             {
-                SwapTiles1(tiles, emptyIndex, emptyIndex - 1);
+                return SwapTiles1(tiles, emptyIndex, emptyIndex - 1);
             }
 
             return null;
@@ -82,7 +84,7 @@ namespace MOLS_Game.TreeClasses
 
             if (emptyIndex < 12) // Check if not in the bottom row
             {
-                SwapTiles1(tiles, emptyIndex, emptyIndex + 4);
+                return SwapTiles1(tiles, emptyIndex, emptyIndex + 4);
             }
 
             return null;
@@ -154,6 +156,57 @@ namespace MOLS_Game.TreeClasses
         }
 
 
+        public static string GetPermutations(string[] tiles1, int numberOfSteps)
+        {
+            MOLSTree tree = new MOLSTree(tiles1);
+
+            Queue<MOLSNode> queue = new Queue<MOLSNode>();
+
+            queue.Enqueue(tree.GetRoot());
+
+            for(int i = 0; i < Math.Pow(4,numberOfSteps+1)-1; i++) 
+            {
+            
+                MOLSNode node = queue.Dequeue();
+                string[] tiles = node.GetTiles();
+                if (node != null && node.GetTiles() != null)
+                {
+                    if (node.IsMOLS())
+                    {
+                        return node.GetPath();
+                    }
+
+                    if(GenerateDown(tiles) != null)
+                    {
+                        node.SetDown(new MOLSNode(GenerateDown(tiles), "D"));
+                        queue.Enqueue(node.GetDown());
+                    }
+                    
+                    if(GenerateUp(tiles) != null)
+                    {
+                        node.SetUp(new MOLSNode(GenerateUp(tiles), "U"));
+                        queue.Enqueue(node.GetUp());
+                    }
+                    
+                    if(GenerateLeft(tiles) != null)
+                    {
+                        node.SetLeft(new MOLSNode(GenerateLeft(tiles), "L"));
+                        queue.Enqueue(node.GetLeft());
+                    }
+                   
+                    if(GenerateRight(tiles) != null)
+                    {
+                        node.SetRight(new MOLSNode(GenerateRight(tiles), "R"));
+                        queue.Enqueue(node.GetRight());
+                    }
+
+                    
+                }
+
+            }
+            return "No MOLS within" + numberOfSteps + "steps.";
+
+        }
 
 
 

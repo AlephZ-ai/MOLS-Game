@@ -10,6 +10,8 @@
             root = new MOLSNode(tiles);
         }
 
+        public MOLSNode GetRoot() { return root; }
+
         //define a function that gets the steps from one to another.
 
 }
