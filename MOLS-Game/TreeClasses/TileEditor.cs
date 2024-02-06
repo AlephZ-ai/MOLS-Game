@@ -92,22 +92,21 @@ namespace MOLS_Game.TreeClasses
 
         private static string[] SwapTiles1(string[] tiles, int index1, int index2)
         {
-            string[] output = tiles;
+            string[] output = (string[])tiles.Clone();
 
             var temp = output[index1];
             output[index1] = output[index2];
             output[index2] = temp;
 
             return output;
-            
-            
         }
 
         public static bool CheckIfMOLS(string[] tiles)
         {
-            
+
 
             //columns
+            Console.WriteLine(tiles.Length);
             for(int i = 0; i < 4; i++)
             {
                 bool a = tiles[i].Substring(0, 1) == tiles[i + 4].Substring(0, 1);
@@ -158,6 +157,7 @@ namespace MOLS_Game.TreeClasses
 
         public static string GetPermutations(string[] tiles1, int numberOfSteps)
         {
+            if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
             MOLSTree tree = new MOLSTree(tiles1);
 
             Queue<MOLSNode> queue = new Queue<MOLSNode>();
@@ -169,6 +169,7 @@ namespace MOLS_Game.TreeClasses
             
                 MOLSNode node = queue.Dequeue();
                 string[] tiles = node.GetTiles();
+                Console.WriteLine(tiles.Length);
                 if (node != null && node.GetTiles() != null)
                 {
                     if (node.IsMOLS())

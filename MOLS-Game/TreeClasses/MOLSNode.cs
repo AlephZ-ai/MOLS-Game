@@ -15,12 +15,15 @@
 
         public MOLSNode(string[] tiles)
         {
+            if (tiles == null) throw new ArgumentNullException(nameof(tiles));
+            Console.WriteLine(tiles.Length);
             this.tiles = tiles;
             isMOLS = TileEditor.CheckIfMOLS(tiles);
         }
 
         public MOLSNode(string[] tiles, string step)
         {
+            if (tiles == null) throw new ArgumentNullException(nameof(tiles));
             this.tiles = tiles;
             isMOLS = TileEditor.CheckIfMOLS(tiles);
             path = path + step;

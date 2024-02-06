@@ -7,6 +7,8 @@
         private MOLSNode root;
         public MOLSTree(string[] tiles)
         {
+            if (tiles == null) throw new ArgumentNullException(nameof(tiles));
+            Console.WriteLine(tiles.Length);
             root = new MOLSNode(tiles);
         }
 
