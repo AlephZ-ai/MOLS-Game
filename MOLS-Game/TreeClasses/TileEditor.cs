@@ -154,9 +154,23 @@ namespace MOLS_Game.TreeClasses
             return true;
         }
 
+        public static string GetInverse(string t, Dictionary<string,string> map)
+        {
+            
+
+            return map.GetValueOrDefault(t);
+
+
+        }
+
 
         public static string GetPermutations(string[] tiles1, int numberOfSteps)
         {
+            Dictionary<string, string> map = new Dictionary<string, string>();
+            map.Add("U", "D");
+            map.Add("D", "U");
+            map.Add("R", "L");
+            map.Add("L", "R");
 
             int n = 0;
 
@@ -188,6 +202,7 @@ namespace MOLS_Game.TreeClasses
                     checkedDict.Add(tiles, true);
 
 
+                    int l = node.GetPath().Length-1;
 
 
                     if (node != null && tiles != null)
@@ -197,35 +212,53 @@ namespace MOLS_Game.TreeClasses
                             return node.GetPath();
                         }
 
-                        string[] downNeighbor = GenerateDown(tiles);
-
-                        if (downNeighbor != null && !checkedDict.ContainsKey(downNeighbor))
+                        if (l==-1 || !"D".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
                         {
-                            
 
-                            node.SetDown(new MOLSNode(downNeighbor, node.GetPath()+"D"));
-                            queue.Enqueue(node.GetDown());
+
+
+                            string[] downNeighbor = GenerateDown(tiles);
+
+                            if (downNeighbor != null && !checkedDict.ContainsKey(downNeighbor))
+                            {
+
+                                node.SetDown(new MOLSNode(downNeighbor, node.GetPath() + "D"));
+                                queue.Enqueue(node.GetDown());
+                            }
                         }
 
-                        string[] upNeighbor = GenerateUp(tiles);
-                        if (upNeighbor != null && !checkedDict.ContainsKey(upNeighbor))
+                        if (l == -1 || !"U".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
                         {
-                            node.SetUp(new MOLSNode(upNeighbor, node.GetPath()+"U"));
-                            queue.Enqueue(node.GetUp());
+
+
+                            string[] upNeighbor = GenerateUp(tiles);
+                            if (upNeighbor != null && !checkedDict.ContainsKey(upNeighbor))
+                            {
+                                node.SetUp(new MOLSNode(upNeighbor, node.GetPath() + "U"));
+                                queue.Enqueue(node.GetUp());
+                            }
                         }
 
-                        string[] leftNeighbor = GenerateLeft(tiles);
-                        if (leftNeighbor != null && !checkedDict.ContainsKey(leftNeighbor))
+                        if (l == -1 || !"L".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
                         {
-                            node.SetLeft(new MOLSNode(leftNeighbor, node.GetPath()+ "L"));
-                            queue.Enqueue(node.GetLeft());
+
+
+                            string[] leftNeighbor = GenerateLeft(tiles);
+                            if (leftNeighbor != null && !checkedDict.ContainsKey(leftNeighbor))
+                            {
+                                node.SetLeft(new MOLSNode(leftNeighbor, node.GetPath() + "L"));
+                                queue.Enqueue(node.GetLeft());
+                            }
                         }
 
-                        string[] rightNeighbor = GenerateRight(tiles);
-                        if (rightNeighbor != null && !checkedDict.ContainsKey(rightNeighbor))
+                        if (l == -1 || !"R".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
                         {
-                            node.SetRight(new MOLSNode(rightNeighbor, node.GetPath()+ "R"));
-                            queue.Enqueue(node.GetRight());
+                            string[] rightNeighbor = GenerateRight(tiles);
+                            if (rightNeighbor != null && !checkedDict.ContainsKey(rightNeighbor))
+                            {
+                                node.SetRight(new MOLSNode(rightNeighbor, node.GetPath() + "R"));
+                                queue.Enqueue(node.GetRight());
+                            }
                         }
 
 
