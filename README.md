@@ -1,4 +1,4 @@
-# MOLS-Game README
+# MOLS-Game & Pathfinder README
 
 ## What is a MOLS?
 
@@ -10,7 +10,10 @@ MOLS-Game is a twist on the classic 15-puzzle, where the goal is not simply to o
 
 ## Purpose of This Code
 
-The primary aim of this project is to explore the properties of MOLS. We are particularly focused on demonstrating that any arbitrary permutation of a 15-puzzle is "playable," meaning it can reach a valid MOLS solution within a reasonable number of moves (approximately 15-20). Additionally, we are interested in finding the  smallest distances possible between two MOLS as well as the two MOLS with the largest non-infinite distance between each other. 
+The primary aim of this project is to explore the properties of MOLS. We are particularly focused on demonstrating that any arbitrary permutation of a 15-puzzle is "playable," meaning it can reach a valid MOLS solution within a reasonable number of moves (approximately 15-20). Additionally, we are interested in finding the smallest distances possible between two MOLS as well as the two MOLS with the largest non-infinite distance between each other. 
+
+## Current Features
+Currently, the shortest path to an MOLS from a given random permutation can be found. 
 
 ## Installation
 
