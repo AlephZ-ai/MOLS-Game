@@ -5,115 +5,60 @@ using System.Collections.Generic;
 namespace MOLS_Game.TreeClasses
 {
     public static class TileEditor
-{
-        
-        public static string[]? GenerateUp(string[] tiles)
+    {
+
+        public static string[]? MoveTile(string[] tiles, bool isVertical, int steps)
         {
+            int emptyIndex = Array.IndexOf(tiles, "__");
+            if (emptyIndex == -1) return null;
 
-            int emptyIndex = 0;
-
-            for(int i = 0; i < tiles.Length; i++)
+            int targetIndex = CalculateTargetIndex(emptyIndex, isVertical, steps);
+            if (targetIndex != -1)
             {
-                if (tiles[i] == "__") 
-                {
-                emptyIndex = i;
-                }
+                return SwapTiles(tiles, emptyIndex, targetIndex);
             }
 
-            if (emptyIndex > 3) // Check if not in the top row
-            {
-                return SwapTiles1(tiles, emptyIndex, emptyIndex - 4);
-            }
-
-            return null;
+            return tiles;
         }
 
-        public static string[]? GenerateRight(string[] tiles)
+        private static int CalculateTargetIndex(int index, bool isVertical, int steps)
         {
+            int row = index / 4;
+            int col = index % 4;
+            int newRow = row, newCol = col;
 
-            int emptyIndex = 0;
-
-            for (int i = 0; i < tiles.Length; i++)
+            if (isVertical)
             {
-                if (tiles[i] == "__")
-                {
-                    emptyIndex = i;
-                }
+                newRow += steps == 3 ? -1 : (steps % 4 == 1 ? 1 : 0);
+                if (newRow < 0 || newRow >= 4) return -1; // Invalid move vertically
+            }
+            else
+            {
+                newCol += steps == 3 ? -1 : (steps % 4 == 1 ? 1 : 0);
+                if (newCol < 0 || newCol >= 4) return -1; // Invalid move horizontally
             }
 
-            if (emptyIndex % 4 != 3) // Check if not in the last column
-            {
-                return SwapTiles1(tiles, emptyIndex, emptyIndex + 1);
-            }
-
-            return null;
-        }
-        public static string[]? GenerateLeft(string[] tiles)
-        {
-
-            int emptyIndex = 0;
-
-            for (int i = 0; i < tiles.Length; i++)
-            {
-                if (tiles[i] == "__")
-                {
-                    emptyIndex = i;
-                }
-            }
-
-            if (emptyIndex % 4 != 0) // Check if not in the first column
-            {
-                return SwapTiles1(tiles, emptyIndex, emptyIndex - 1);
-            }
-
-            return null;
+            return newRow * 4 + newCol;
         }
 
-        public static string[]? GenerateDown(string[] tiles)
+        private static string[] SwapTiles(string[] tiles, int index1, int index2)
         {
-
-            int emptyIndex = 0;
-
-            for (int i = 0; i < tiles.Length; i++)
-            {
-                if (tiles[i] == "__")
-                {
-                    emptyIndex = i;
-                }
-            }
-
-            if (emptyIndex < 12) // Check if not in the bottom row
-            {
-                return SwapTiles1(tiles, emptyIndex, emptyIndex + 4);
-            }
-
-            return null;
-        }
-
-        private static string[] SwapTiles1(string[] tiles, int index1, int index2)
-        {
-            string[] output = (string[])tiles.Clone();
-
-            var temp = output[index1];
-            output[index1] = output[index2];
-            output[index2] = temp;
-
-            return output;
+            string[] newTiles = (string[])tiles.Clone();
+            (newTiles[index1], newTiles[index2]) = (tiles[index2], tiles[index1]);
+            return newTiles;
         }
 
         public static bool CheckIfMOLS(string[] tiles)
         {
-
-
             //columns
             //Console.WriteLine(tiles.Length);
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 bool a = tiles[i].Substring(0, 1) == tiles[i + 4].Substring(0, 1);
-                bool b = tiles[i + 4].Substring(0, 1) == tiles[i+8].Substring(0, 1);
+                bool b = tiles[i + 4].Substring(0, 1) == tiles[i + 8].Substring(0, 1);
                 bool c = tiles[i + 8].Substring(0, 1) == tiles[i + 12].Substring(0, 1);
-                
-                if(a || b || c)
+
+                if (a || b || c)
                 {
                     return false;
                 }
@@ -127,10 +72,9 @@ namespace MOLS_Game.TreeClasses
                     return false;
                 }
             }
-            
 
             //rows
-            for (int i = 0; i < 12; i+=4)
+            for (int i = 0; i < 12; i += 4)
             {
                 bool a = tiles[i].Substring(0, 1) == tiles[i + 1].Substring(0, 1);
                 bool b = tiles[i + 1].Substring(0, 1) == tiles[i + 2].Substring(0, 1);
@@ -154,123 +98,41 @@ namespace MOLS_Game.TreeClasses
             return true;
         }
 
-        public static string GetInverse(string t, Dictionary<string,string> map)
+        public static string GetPermutations(string[] tiles, int numberOfSteps)
         {
-            
+            var seen = new HashSet<string> { string.Join(",", tiles) };
+            Queue<(string[] Tiles, string Path)> queue = new Queue<(string[] Tiles, string Path)>();
+            queue.Enqueue((tiles, ""));
 
-            return map.GetValueOrDefault(t);
-
-
-        }
-
-
-        public static string GetPermutations(string[] tiles1, int numberOfSteps)
-        {
-            Dictionary<string, string> map = new Dictionary<string, string>();
-            map.Add("U", "D");
-            map.Add("D", "U");
-            map.Add("R", "L");
-            map.Add("L", "R");
-
-            int n = 0;
-
-            Dictionary<string[], bool> checkedDict = new Dictionary<string[], bool>();
-
-
-            if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
-            MOLSTree tree = new MOLSTree(tiles1);
-
-            Queue<MOLSNode> queue = new Queue<MOLSNode>();
-
-            queue.Enqueue(tree.GetRoot());
-            
-
-            while(queue.Count() != 0) 
+            while (queue.Count > 0)
             {
-                n++;
-
-                if(Math.Log(n) / Math.Log(4) == Math.Floor(Math.Log(n) / Math.Log(4))) {
-                    Console.WriteLine(Math.Log(n) / Math.Log(4));
+                var (currentTiles, path) = queue.Dequeue();
+                if (CheckIfMOLS(currentTiles))
+                {
+                    return path.TrimEnd(',', ' ');
                 }
 
-                
-                MOLSNode node = queue.Dequeue();
-                string[] tiles = node.GetTiles();
-
-                if (!checkedDict.ContainsKey(tiles))
+                for (int i = 1; i <= 3; i++)
                 {
-                    checkedDict.Add(tiles, true);
-
-
-                    int l = node.GetPath().Length-1;
-
-
-                    if (node != null && tiles != null)
+                    foreach (bool isVertical in new[] { true, false })
                     {
-                        if (node.IsMOLS())
+                        var newTiles = MoveTile(currentTiles, isVertical, i);
+                        if (newTiles != null && seen.Add(string.Join(",", newTiles)))
                         {
-                            return node.GetPath();
+                            string moveDescription = TranslateBinaryMoveToUserDirection(isVertical, i);
+                            queue.Enqueue((newTiles, $"{path}{moveDescription}, "));
                         }
-
-                        if (l==-1 || !"D".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
-                        {
-
-
-
-                            string[] downNeighbor = GenerateDown(tiles);
-
-                            if (downNeighbor != null && !checkedDict.ContainsKey(downNeighbor))
-                            {
-
-                                node.SetDown(new MOLSNode(downNeighbor, node.GetPath() + "D"));
-                                queue.Enqueue(node.GetDown());
-                            }
-                        }
-
-                        if (l == -1 || !"U".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
-                        {
-
-
-                            string[] upNeighbor = GenerateUp(tiles);
-                            if (upNeighbor != null && !checkedDict.ContainsKey(upNeighbor))
-                            {
-                                node.SetUp(new MOLSNode(upNeighbor, node.GetPath() + "U"));
-                                queue.Enqueue(node.GetUp());
-                            }
-                        }
-
-                        if (l == -1 || !"L".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
-                        {
-
-
-                            string[] leftNeighbor = GenerateLeft(tiles);
-                            if (leftNeighbor != null && !checkedDict.ContainsKey(leftNeighbor))
-                            {
-                                node.SetLeft(new MOLSNode(leftNeighbor, node.GetPath() + "L"));
-                                queue.Enqueue(node.GetLeft());
-                            }
-                        }
-
-                        if (l == -1 || !"R".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
-                        {
-                            string[] rightNeighbor = GenerateRight(tiles);
-                            if (rightNeighbor != null && !checkedDict.ContainsKey(rightNeighbor))
-                            {
-                                node.SetRight(new MOLSNode(rightNeighbor, node.GetPath() + "R"));
-                                queue.Enqueue(node.GetRight());
-                            }
-                        }
-
-
                     }
                 }
-
             }
-            return "No MOLS";
 
+            return "No MOLS";
         }
 
-
-
+        public static string TranslateBinaryMoveToUserDirection(bool isVertical, int steps)
+        {
+            if (isVertical) return steps == 3 ? "Up" : (steps == 1 ? "Down" : "");
+            else return steps == 3 ? "Left" : (steps == 1 ? "Right" : "");
+        }
     }
 }
