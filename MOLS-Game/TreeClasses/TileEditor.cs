@@ -178,7 +178,7 @@ namespace MOLS_Game.TreeClasses
 
 
             if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
-            MOLSTree tree = new MOLSTree(tiles1);
+            MOLSTree? tree = new MOLSTree(tiles1);
 
             Queue<MOLSNode> queue = new Queue<MOLSNode>();
 

@@ -53,7 +53,8 @@
 
     private void FindPath()
     {
-        path = TileEditor.GetPermutations(tiles, 10); //change 15 if doesn't work
+        path = TileEditor.GetPermutations(tiles, 10);
+        GC.Collect();
         StateHasChanged();
     }
 
