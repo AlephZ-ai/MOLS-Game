@@ -131,8 +131,8 @@ namespace MOLS_Game.TreeClasses
 
         public static string TranslateBinaryMoveToUserDirection(bool isVertical, int steps)
         {
-            if (isVertical) return steps == 3 ? "Up" : (steps == 1 ? "Down" : "");
-            else return steps == 3 ? "Left" : (steps == 1 ? "Right" : "");
+            if (isVertical) return steps == 3 ? "U" : (steps == 1 ? "D" : "");
+            else return steps == 3 ? "L" : (steps == 1 ? "R" : "");
         }
     }
 }
