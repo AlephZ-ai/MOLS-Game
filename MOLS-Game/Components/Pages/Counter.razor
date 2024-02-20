@@ -15,14 +15,23 @@
         {
             if (TileEditor.CheckIfMOLS(tiles))
             {
-                <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: green">
+                <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: lightgreen">
                     @tiles[i]
                 </div>
             } else
             {
-                <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black;">
-                    @tiles[i]
-                </div>
+                if(tiles[i] == "11")
+                {
+                    <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: gray">
+                        @tiles[i]
+                    </div>
+                } else
+                {
+                    <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black;">
+                        @tiles[i]
+                    </div>
+                }
+                
             }
             
         }
@@ -43,9 +52,9 @@
 </div>
 
 @code {
-    private string[] tiles = { "__", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
+    private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
 
-    public string tableInfo = "010203040506070809101112131415__"; // turn into starting permutation every time.
+    public string tableInfo = "01020304050607080910111213141511"; // turn into starting permutation every time.
     private int emptyIndex = 0; // Assuming the empty space starts at the bottom right
 
 
@@ -69,7 +78,7 @@
     {
         var rng = new Random();
         rng.Shuffle(tiles); //use this to shuffle for a shuffle button as well
-        emptyIndex = Array.IndexOf(tiles,"__");
+        emptyIndex = Array.IndexOf(tiles,"11");
 
         
     }

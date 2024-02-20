@@ -9,7 +9,7 @@ namespace MOLS_Game.TreeClasses
 
         public static string[]? MoveTile(string[] tiles, bool isVertical, int steps)
         {
-            int emptyIndex = Array.IndexOf(tiles, "__");
+            int emptyIndex = Array.IndexOf(tiles, "11");
             if (emptyIndex == -1) return null;
 
             int targetIndex = CalculateTargetIndex(emptyIndex, isVertical, steps);
