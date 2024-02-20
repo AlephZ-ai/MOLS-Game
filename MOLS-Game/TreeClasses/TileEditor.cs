@@ -14,7 +14,7 @@ namespace MOLS_Game.TreeClasses
 
             for(int i = 0; i < tiles.Length; i++)
             {
-                if (tiles[i] == "__") 
+                if (tiles[i] == "11") 
                 {
                 emptyIndex = i;
                 }
@@ -35,7 +35,7 @@ namespace MOLS_Game.TreeClasses
 
             for (int i = 0; i < tiles.Length; i++)
             {
-                if (tiles[i] == "__")
+                if (tiles[i] == "11")
                 {
                     emptyIndex = i;
                 }
@@ -55,7 +55,7 @@ namespace MOLS_Game.TreeClasses
 
             for (int i = 0; i < tiles.Length; i++)
             {
-                if (tiles[i] == "__")
+                if (tiles[i] == "11")
                 {
                     emptyIndex = i;
                 }
@@ -76,7 +76,7 @@ namespace MOLS_Game.TreeClasses
 
             for (int i = 0; i < tiles.Length; i++)
             {
-                if (tiles[i] == "__")
+                if (tiles[i] == "11")
                 {
                     emptyIndex = i;
                 }
