@@ -103,55 +103,27 @@ namespace MOLS_Game.TreeClasses
 
         public static bool CheckIfMOLS(string[] tiles)
         {
+            if (tiles.Length != 16) return false; 
 
-
-            //columns
-            //Console.WriteLine(tiles.Length);
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
-                bool a = tiles[i].Substring(0, 1) == tiles[i + 4].Substring(0, 1);
-                bool b = tiles[i + 4].Substring(0, 1) == tiles[i+8].Substring(0, 1);
-                bool c = tiles[i + 8].Substring(0, 1) == tiles[i + 12].Substring(0, 1);
-                
-                if(a || b || c)
+                HashSet<char> rowChars1 = new HashSet<char>();
+                HashSet<char> colChars1 = new HashSet<char>();
+                HashSet<char> rowChars2 = new HashSet<char>();
+                HashSet<char> colChars2 = new HashSet<char>();
+
+                for (int j = 0; j < 4; j++)
                 {
-                    return false;
-                }
-
-                bool a1 = tiles[i].Substring(1, 1) == tiles[i + 4].Substring(1, 1);
-                bool b1 = tiles[i + 4].Substring(1, 1) == tiles[i + 8].Substring(1, 1);
-                bool c1 = tiles[i + 8].Substring(1, 1) == tiles[i + 12].Substring(1, 1);
-
-                if (a1 || b1 || c1)
-                {
-                    return false;
-                }
-            }
-            
-
-            //rows
-            for (int i = 0; i < 12; i+=4)
-            {
-                bool a = tiles[i].Substring(0, 1) == tiles[i + 1].Substring(0, 1);
-                bool b = tiles[i + 1].Substring(0, 1) == tiles[i + 2].Substring(0, 1);
-                bool c = tiles[i + 2].Substring(0, 1) == tiles[i + 3].Substring(0, 1);
-
-                if (a || b || c)
-                {
-                    return false;
-                }
-
-                bool a1 = tiles[i].Substring(1, 1) == tiles[i + 1].Substring(1, 1);
-                bool b1 = tiles[i + 1].Substring(1, 1) == tiles[i + 2].Substring(1, 1);
-                bool c1 = tiles[i + 2].Substring(1, 1) == tiles[i + 3].Substring(1, 1);
-
-                if (a1 || b1 || c1)
-                {
-                    return false;
+                    // rows
+                    if (!rowChars1.Add(tiles[i * 4 + j][0]) || !rowChars2.Add(tiles[i * 4 + j][1])) return false;
+                    // columns
+                    if (!colChars1.Add(tiles[j * 4 + i][0]) || !colChars2.Add(tiles[j * 4 + i][1])) return false;
                 }
             }
 
             return true;
+
+
         }
 
         public static string GetInverse(string t, Dictionary<string,string> map)
