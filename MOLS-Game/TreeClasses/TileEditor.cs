@@ -136,7 +136,7 @@ namespace MOLS_Game.TreeClasses
         }
 
 
-        public static string GetPermutations(string[] tiles1, int numberOfSteps)
+        public static string GetPermutations(string[] tiles1)
         {
             Dictionary<string, string> map = new Dictionary<string, string>();
             map.Add("U", "D");
@@ -161,13 +161,15 @@ namespace MOLS_Game.TreeClasses
             {
                 n++;
 
-                if(Math.Log(n) / Math.Log(4) == Math.Floor(Math.Log(n) / Math.Log(4))) {
-                    Console.WriteLine(Math.Log(n) / Math.Log(4));
-                }
-
                 
                 MOLSNode node = queue.Dequeue();
                 string[] tiles = node.GetTiles();
+
+                if (Math.Log(n) / Math.Log(3) == Math.Floor(Math.Log(n) / Math.Log(3)))
+                {
+                    Console.WriteLine(node.GetPath().Length);
+                }
+
 
                 if (!checkedDict.ContainsKey(tiles))
                 {
