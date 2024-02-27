@@ -121,14 +121,7 @@ namespace MOLS_Game.TreeClasses
         public static bool CheckIfPermutation(string[] tiles, string[] end)
         {
             
-            for(int i = 0; i < tiles.Length; i++)
-            {
-                if (!tiles[i].Equals(end[i]))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return tiles.SequenceEqual(end);
 
 
 
@@ -182,6 +175,7 @@ namespace MOLS_Game.TreeClasses
             map.Add("L", "R");
 
             int n = 0;
+            int step = 0;
 
             Dictionary<string[], bool> checkedDict = new Dictionary<string[], bool>();
 
@@ -202,9 +196,16 @@ namespace MOLS_Game.TreeClasses
                 MOLSNode node = queue.Dequeue();
                 string[] tiles = node.GetTiles();
 
-                if (Math.Log(n) / Math.Log(3) == Math.Floor(Math.Log(n) / Math.Log(3)))
+                if (n%50000==0)
                 {
-                    Console.WriteLine(node.GetPath().Length);
+                    int temp = step = node.GetPath().Length;
+                    
+                    if (step != temp)
+                    {
+                        step = temp;
+                        Console.WriteLine(step);
+                    }
+                    
                 }
 
 
