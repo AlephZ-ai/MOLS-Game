@@ -42,6 +42,7 @@
         <a href="/Permutations/@tableInfo/@emptyIndex" class="btn btn-outline-primary">Get Closest Permutations</a>
         <button class="btn btn-outline-primary" @onclick="InitializeGame">Press to Randomize Tiles</button>
         <button class="btn btn-outline-primary" @onclick="RunJobAsync">Press to Find Solution</button>
+        <button class="btn btn-outline-primary" @onclick="RunJobAsync2">Press to Find Swap</button>
 
 </div>
     <div style="width: 200px; height: 100px; display: flex; align-items: center; justify-content: left; border: 1px solid black;">
@@ -62,6 +63,22 @@
     {
         await Task.Run(() => FindPath());
         StateHasChanged();
+    }
+
+    async Task RunJobAsync2()
+    {
+        await Task.Run(() => FindPath2());
+        StateHasChanged();
+    }
+    private void FindPath2()
+    {
+
+        //remember
+        path = TileEditor.GetPermutations2(tiles, TileEditor.SwapTiles1(tiles, 0, 1));
+        GC.Collect();
+
+
+
     }
 
     private string path = "";

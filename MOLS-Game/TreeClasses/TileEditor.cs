@@ -6,6 +6,11 @@ namespace MOLS_Game.TreeClasses
 {
     public static class TileEditor
 {
+
+
+
+
+        //GENREATE FUNCTIONS
         
         public static string[]? GenerateUp(string[] tiles)
         {
@@ -90,7 +95,13 @@ namespace MOLS_Game.TreeClasses
             return null;
         }
 
-        private static string[] SwapTiles1(string[] tiles, int index1, int index2)
+
+
+
+
+        //SWAP FUNCTION
+
+        public static string[] SwapTiles1(string[] tiles, int index1, int index2)
         {
             string[] output = (string[])tiles.Clone();
 
@@ -100,6 +111,32 @@ namespace MOLS_Game.TreeClasses
 
             return output;
         }
+
+
+
+
+
+        //CHECK FUNCTIONS
+
+        public static bool CheckIfPermutation(string[] tiles, string[] end)
+        {
+            
+            for(int i = 0; i < tiles.Length; i++)
+            {
+                if (!tiles[i].Equals(end[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+
+
+
+        }
+
+
+
+
 
         public static bool CheckIfMOLS(string[] tiles)
         {
@@ -243,6 +280,129 @@ namespace MOLS_Game.TreeClasses
             return "No MOLS";
 
         }
+
+
+
+
+
+
+
+
+        public static string GetPermutations2(string[] tiles1, string[] end)
+        {
+            Dictionary<string, string> map = new Dictionary<string, string>();
+            map.Add("U", "D");
+            map.Add("D", "U");
+            map.Add("R", "L");
+            map.Add("L", "R");
+
+
+            int n = 0;
+
+            Dictionary<string[], bool> checkedDict = new Dictionary<string[], bool>();
+
+
+            if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
+            MOLSTree? tree = new MOLSTree(tiles1);
+
+            Queue<MOLSNode> queue = new Queue<MOLSNode>();
+
+            queue.Enqueue(tree.GetRoot());
+
+
+            while (queue.Count() != 0)
+            {
+                n++;
+
+
+                MOLSNode node = queue.Dequeue();
+                string[] tiles = node.GetTiles();
+
+                if (Math.Log(n) / Math.Log(3) == Math.Floor(Math.Log(n) / Math.Log(3)))
+                {
+                    Console.WriteLine(node.GetPath().Length);
+                }
+
+
+                if (!checkedDict.ContainsKey(tiles))
+                {
+                    checkedDict.Add(tiles, true);
+
+
+                    int l = node.GetPath().Length - 1;
+
+
+                    if (node != null && tiles != null)
+                    {
+                        if (CheckIfPermutation(node.GetTiles(), end))
+                        {
+                            return node.GetPath();
+                        }
+
+                        if (l == -1 || !"D".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
+                        {
+
+
+
+                            string[] downNeighbor = GenerateDown(tiles);
+
+                            if (downNeighbor != null && !checkedDict.ContainsKey(downNeighbor))
+                            {
+
+                                node.SetDown(new MOLSNode(downNeighbor, node.GetPath() + "D"));
+                                queue.Enqueue(node.GetDown());
+                            }
+                        }
+
+                        if (l == -1 || !"U".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
+                        {
+
+
+                            string[] upNeighbor = GenerateUp(tiles);
+                            if (upNeighbor != null && !checkedDict.ContainsKey(upNeighbor))
+                            {
+                                node.SetUp(new MOLSNode(upNeighbor, node.GetPath() + "U"));
+                                queue.Enqueue(node.GetUp());
+                            }
+                        }
+
+                        if (l == -1 || !"L".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
+                        {
+
+
+                            string[] leftNeighbor = GenerateLeft(tiles);
+                            if (leftNeighbor != null && !checkedDict.ContainsKey(leftNeighbor))
+                            {
+                                node.SetLeft(new MOLSNode(leftNeighbor, node.GetPath() + "L"));
+                                queue.Enqueue(node.GetLeft());
+                            }
+                        }
+
+                        if (l == -1 || !"R".Equals(GetInverse(node.GetPath().Substring(l, 1), map)))
+                        {
+                            string[] rightNeighbor = GenerateRight(tiles);
+                            if (rightNeighbor != null && !checkedDict.ContainsKey(rightNeighbor))
+                            {
+                                node.SetRight(new MOLSNode(rightNeighbor, node.GetPath() + "R"));
+                                queue.Enqueue(node.GetRight());
+                            }
+                        }
+
+
+                    }
+                }
+
+            }
+            return "No MOLS";
+
+        }
+
+
+
+
+
+
+
 
 
 
