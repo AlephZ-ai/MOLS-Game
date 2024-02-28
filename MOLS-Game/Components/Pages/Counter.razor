@@ -2,6 +2,8 @@
 @rendermode InteractiveServer
 @using System
 @using MOLS_Game.TreeClasses
+@using System.Diagnostics;
+
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 
@@ -10,89 +12,106 @@
 <h3>The MOLS Puzzle Game</h3>
 
 <div style="display: flex; align-items: start; gap: 20px;">
-    <div class="puzzle-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
-        @for (int i = 0; i < 16; i++)
-        {
-            if (TileEditor.CheckIfMOLS(tiles))
+
+    <div style="display: flex; flex-direction: column; align-items:center; gap:20px">
+        <div class="puzzle-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
+            @for (int i = 0; i < 16; i++)
             {
-                <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: lightgreen">
-                    @tiles[i]
-                </div>
-            } else
-            {
-                if(tiles[i] == "11")
+                if (TileEditor.CheckIfMOLS(tiles))
                 {
-                    <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: gray">
-                        @tiles[i]
-                    </div>
-                } else
-                {
-                    <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black;">
+                    <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: lightgreen">
                         @tiles[i]
                     </div>
                 }
-                
+                else
+                {
+                    if (tiles[i] == "11")
+                    {
+                        <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: gray">
+                            @tiles[i]
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black;">
+                            @tiles[i]
+                        </div>
+                    }
+
+                }
+
             }
-            
-        }
-    </div>
-<div style="display: flex; flex-direction: column; align-items:center; gap:20px">
-    
-      <button class="btn btn-outline-primary" @onkeydown="KeyDown">Press to Use Arrow Keys</button>
-        <a href="/Permutations/@tableInfo/@emptyIndex" class="btn btn-outline-primary">Get Closest Permutations</a>
-        <button class="btn btn-outline-primary" @onclick="InitializeGame">Press to Randomize Tiles</button>
-        <button class="btn btn-outline-primary" @onclick="RunJobAsync">Press to Find Solution</button>
-        <button class="btn btn-outline-primary" @onclick="RunJobAsync2">Press to Find Swap</button>
-
-</div>
-    <div style="width: 200px; height: 100px; display: flex; align-items: center; justify-content: left; border: 1px solid black;">
-        @path
+        </div>
+        <div style="width: 416px; height: 100px; display: flex; align-items: center; justify-content: left; border: 1px solid black;word-wrap:break-word;">
+            @path
+        </div>
     </div>
     
-
-</div>
-
-@code {
-    //private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
-    private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
-    public string tableInfo = "01020304050607080910111213141511"; // turn into starting permutation every time.
-    private int emptyIndex = 0; // Assuming the empty space starts at the bottom right
+    <div style="display: flex; flex-direction: column; align-items:center; gap:20px;">
 
 
-    async Task RunJobAsync()
-    {
-        await Task.Run(() => FindPath());
-        StateHasChanged();
-    }
-
-    async Task RunJobAsync2()
-    {
-        await Task.Run(() => FindPath2());
-        StateHasChanged();
-    }
-    private void FindPath2()
-    {
-
-        //remember
-        path = TileEditor.GetPermutations2(tiles, TileEditor.SwapTiles1(tiles, 0, 6));
-        GC.Collect();
-
-
-
-    }
-
-    private string path = "";
-
-    private void FindPath()
-    {
-        path = TileEditor.GetPermutations(tiles);
-        GC.Collect();
+        
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onkeydown="KeyDown">Press to Use Arrow Keys</button>
+        <!-- <a href="/Permutations/@tableInfo/@emptyIndex" class="btn btn-outline-primary">Get Closest Permutations</a>-->
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="InitializeGame">Press to Randomize Tiles</button>
         
 
 
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.New)">Find Solution (NEW)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Old)">Find Solution (OLD)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>
+
+    </div>
+
+    
+
+    
+    
+
+</div>
+
+
+
+@code {
+        //private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
+    private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
+    public string tableInfo = "01020304050607080910111213141511"; // turn into starting permutation every time.
+    private int emptyIndex = 0; // Assuming the empty space starts at the bottom right
+    private string path = "";
+
+    async Task RunJobAsync(PathFindingType type)
+    {
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        await Task.Run(() => FindPath(type));
+        StateHasChanged();
+
+        stopwatch.Stop();
+        Console.WriteLine($"Milliseconds to run {type}: " + stopwatch.ElapsedMilliseconds);
     }
 
 
+    private void FindPath(PathFindingType type)
+    {
+        switch (type)
+        {
+            case PathFindingType.New:
+                path = TileEditor.GetPermutations(tiles);
+                break;
+            case PathFindingType.Swap:
+                path = TileEditor.GetPermutations2(tiles, TileEditor.SwapTiles1(tiles, 0, 6));
+                break;
+            case PathFindingType.Old:
+                path = TileEditor.GetPermutationsOld(tiles);
+                break;
+        }
+        GC.Collect();
+    }
+
+
+    
+
+   
 
     protected override void OnInitialized()
     {
@@ -105,10 +124,8 @@
         var rng = new Random();
         rng.Shuffle(tiles); //use this to shuffle for a shuffle button as well
         emptyIndex = Array.IndexOf(tiles,"11");
-
         
     }
-
 
 
 
@@ -133,12 +150,9 @@
 
     private void MoveLeft()
     {
-        //Console.WriteLine("test");
-
-
-        //Console.WriteLine("tried to move left {emptyIndex} ");
-        // Implement logic to move the empty space left, if possible
-        if (emptyIndex % 4 != 0) // Check if not in the first column
+       
+        
+        if (emptyIndex % 4 != 0) // check if not in the first column
         {
             SwapTiles(emptyIndex, emptyIndex - 1);
         }
@@ -146,8 +160,7 @@
 
     private void MoveRight()
     {
-        // Implement logic to move the empty space right, if possible
-        if (emptyIndex % 4 != 3) // Check if not in the last column
+        if (emptyIndex % 4 != 3) // check if not in the last column
         {
             SwapTiles(emptyIndex, emptyIndex + 1);
         }
@@ -158,12 +171,8 @@
         var temp = tiles[index1];
         tiles[index1] = tiles[index2];
         tiles[index2] = temp;
-        emptyIndex = index2; // Update the empty space index
+        emptyIndex = index2; 
 
-        //foreach(string t in tiles)
-        //{
-        //  Console.WriteLine(t);
-        //}
 
         tableInfo = "";
         foreach(string t in tiles)
@@ -191,5 +200,11 @@
     }
 
 
-   
+    public enum PathFindingType
+    {
+        New,
+        Swap,
+        Old
+    }
+
 }
