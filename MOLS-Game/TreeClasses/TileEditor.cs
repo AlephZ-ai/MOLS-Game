@@ -1,6 +1,7 @@
 ﻿using static System.Runtime.InteropServices.Marshalling.IIUnknownCacheStrategy;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MOLS_Game.TreeClasses
 {
@@ -161,9 +162,10 @@ namespace MOLS_Game.TreeClasses
             Queue<MOLSNode> queue = new Queue<MOLSNode>();
 
             queue.Enqueue(tree.GetRoot());
-            
 
-            while(queue.Count != 0) 
+            Stopwatch stopwatch1 = Stopwatch.StartNew();
+
+            while (queue.Count != 0) 
             {
 
                 MOLSNode node = queue.Dequeue();
@@ -174,9 +176,13 @@ namespace MOLS_Game.TreeClasses
                 //start of for console
                 n++;
 
-                if (n % 100000 == 0)
+                if (n == 100000)
                 {
-                    Console.WriteLine(node.GetOverallPath().Length);
+                    n=0;
+                    Console.WriteLine(node.GetOverallPath().Length + "Time: " + stopwatch1.ElapsedMilliseconds);
+                    stopwatch1.Restart();
+                    
+
                 }
                 //end of for console
 

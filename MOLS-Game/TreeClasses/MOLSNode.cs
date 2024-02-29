@@ -9,7 +9,6 @@
         private MOLSNode? left = null;
         private MOLSNode? right = null;
         private MOLSNode? parent = null;
-        //private bool isMOLS = false;
         private string path = "";
 
 
@@ -17,19 +16,16 @@
         {
             if (tiles == null) throw new ArgumentNullException(nameof(tiles));
             this.tiles = tiles;
-            //isMOLS = TileEditor.CheckIfMOLS(tiles);
         }
 
         public MOLSNode(string[] tiles, string step, MOLSNode parent)
         {
             if (tiles == null) throw new ArgumentNullException(nameof(tiles));
             this.tiles = tiles;
-            //isMOLS = TileEditor.CheckIfMOLS(tiles);
-            path = path + step;
+            path = step;
             this.parent = parent;
         }
 
-        //public bool IsMOLS() { return isMOLS; }
 
         public string GetOverallPath()
         {
@@ -37,11 +33,11 @@
             {
                 return "";
             }
-            string output = "";
+            
 
-            output = parent.GetOverallPath() + path;
+            return parent.GetOverallPath() + path;
 
-            return output;
+            
         }
 
        public string GetPath()

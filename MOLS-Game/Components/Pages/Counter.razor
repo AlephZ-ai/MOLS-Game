@@ -73,10 +73,9 @@
 
 
 @code {
-        //private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
     private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
     public string tableInfo = "01020304050607080910111213141511"; // turn into starting permutation every time.
-    private int emptyIndex = 0; // Assuming the empty space starts at the bottom right
+    private int emptyIndex = 0; // Assuming the empty space starts at the top left
     private string path = "";
 
     async Task RunJobAsync(PathFindingType type)
