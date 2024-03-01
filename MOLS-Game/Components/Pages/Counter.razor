@@ -64,8 +64,9 @@
         
 
 
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.New)">Find Solution (NEW)</button>
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Old)">Find Solution (OLD)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.BreadthFirst)">Find Solution (BFS)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.OptimizedH)">Find Solution (H+BFS)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>
 
     </div>
@@ -73,6 +74,8 @@
     <div style="width: 416px; height: 500px; display: flex; align-items: flex-start; justify-content: left; border: 1px solid black;">
         <div style="word-wrap: break-word; overflow-wrap: break-word; width: 100%;">
             @path
+
+            <p>Length: @path.Length</p>
         </div>
     </div>
 
@@ -107,15 +110,19 @@
     {
         switch (type)
         {
-            case PathFindingType.New:
-                path = TileEditor.GetPermutations(tiles);
+            case PathFindingType.BreadthFirst:
+                path = TileEditor.GetPermutationsBreadthFirstSearch(tiles);
                 break;
             case PathFindingType.Swap:
-                path = TileEditor.GetPermutations2(tiles, TileEditor.SwapTiles1(tiles, 0, 6));
+                path = TileEditor.GetPermutations2(tiles, TileEditor.SwapTiles1(tiles, 0, 7));
                 break;
-            case PathFindingType.Old:
-                path = TileEditor.GetPermutationsOld(tiles);
+            case PathFindingType.Heuristic:
+                path = TileEditor.GetPermutationsHeuristic(tiles);
                 break;
+            case PathFindingType.OptimizedH:
+                path = TileEditor.GetPermutationsNewest(tiles,6);
+                break;
+
         }
         GC.Collect();
     }
@@ -214,9 +221,10 @@
 
     public enum PathFindingType
     {
-        New,
+        BreadthFirst,
         Swap,
-        Old
+        Heuristic,
+        OptimizedH
     }
 
 }
