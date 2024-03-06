@@ -68,6 +68,7 @@
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.OptimizedH)">Find Solution (H+BFS)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>
 
     </div>
 
@@ -86,7 +87,16 @@
 
 </div>
 
-
+<script>
+    function saveAsFile(filename, bytesBase64) {
+        var link = document.createElement('a');
+        link.href = "data:text/plain;base64," + bytesBase64;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
 
 @code {
     private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
@@ -105,6 +115,12 @@
         Console.WriteLine($"Milliseconds to run {type}: " + stopwatch.ElapsedMilliseconds);
     }
 
+    private async Task GenerateAndSaveMOLS()
+    {
+        MOLSGenerator generator = new MOLSGenerator();
+        string jsonMOLS = generator.GenerateAndExportMOLS(tiles);
+        await JSRuntime.InvokeVoidAsync("saveAsFile", "MOLS.json", jsonMOLS);
+    }
 
     private void FindPath(PathFindingType type)
     {

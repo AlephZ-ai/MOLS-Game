@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Microsoft.Extensions.ObjectPool;
 
 namespace MOLS_Game.TreeClasses
 {
@@ -113,7 +114,12 @@ namespace MOLS_Game.TreeClasses
             return output;
         }
 
-
+        public static string[] RandomizeTiles(string[] tiles)
+        {
+            var rng = new Random();
+            rng.Shuffle(tiles); //use this to shuffle for a shuffle button as well
+            return tiles;
+        }
 
 
 
