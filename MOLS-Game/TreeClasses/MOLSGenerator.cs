@@ -1,5 +1,4 @@
-﻿using MOLS_Game.Components.Pages;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ namespace MOLS_Game.TreeClasses
     public class MOLSGenerator
     {
         private HashSet<string[]> generatedMOLS = new HashSet<string[]>(new StringArrayEqualityComparer());
-        private const int TargetMOLSCount = 2000;
+        private const int TargetMOLSCount = 200;
 
         public string GenerateAndExportMOLS(string[] initialTiles)
         {

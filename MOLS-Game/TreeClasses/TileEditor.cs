@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Extensions.ObjectPool;
+using System.Collections;
+using System.Xml.Linq;
 
 namespace MOLS_Game.TreeClasses
 {
@@ -216,15 +218,14 @@ namespace MOLS_Game.TreeClasses
 
                 //start of for console
                 n++;
-
-                if (n==100000)
+                if (n % 100000 == 0)
                 {
-                    n = 0;
-                    Console.WriteLine("Step: " + node.GetOverallPath().Length + " Time: " + stopwatch1.ElapsedMilliseconds + " QueueCount: " + queue.Count + " SetCount: " + checkedSet.Count);
+                    GC.Collect();
+                    Console.WriteLine("n: " + n + " Step: " + node.GetOverallPath().Length + " Time: " + stopwatch1.ElapsedMilliseconds + " QueueCount: " + queue.Count + " SetCount: " + checkedSet.Count);
                     stopwatch1.Restart();
 
 
-                }
+                } 
                 //end of for console
 
                 //check if mols

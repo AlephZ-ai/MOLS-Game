@@ -45,10 +45,7 @@
         <div style="width: 416px; height: 100px; display: flex; align-items: flex-start; justify-content: left; border: 1px solid black;word-wrap: break-word; overflow-wrap: break-word;">
             
             <div style="word-wrap: break-word; overflow-wrap: break-word; width: 100%;">
-                @if (path.Length < 40)
-                {
-                    @path
-                }
+                @longPath
             </div>
             
         </div>
@@ -100,9 +97,11 @@
 
 @code {
     private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
+    //private string[] tiles = { "13", "42", "24", "31", "22", "33", "11", "44", "41", "14", "32", "23", "34", "21", "43", "12" };
     public string tableInfo = "01020304050607080910111213141511"; // turn into starting permutation every time.
     private int emptyIndex = 0; // Assuming the empty space starts at the top left
     private string path = "";
+    private string longPath = "";
 
     async Task RunJobAsync(PathFindingType type)
     {
@@ -140,17 +139,58 @@
                 break;
 
         }
+        longPath = ShortToLongMoves(path);
         GC.Collect();
     }
 
 
-    
+
+    public string ShortToLongMoves(string shortMoves)
+    {
+        Dictionary<string, string> ShortToLongMovesMap = new Dictionary<string, string>
+    {
+        { "L", "h1, " },
+        { "LL", "h2, " },
+        { "LLL", "h3, " },
+        { "U", "v1, " },
+        { "UU", "v2, " },
+        { "UUU", "v3, " },
+        { "R", "h3, " },
+        { "RR", "h2, " },
+        { "RRR", "h1, " },
+        { "D", "v3, " },
+        { "DD", "v2, " },
+        { "DDD", "v1, " }
+    };
+
+        string longMoves = "";
+        List<string> shortMovesList = new List<string>();
+
+        int p1 = 0;
+        for (int i = 1; i <= shortMoves.Length; i++)
+        {
+            if (i == shortMoves.Length || shortMoves[i] != shortMoves[i - 1])
+            {
+                shortMovesList.Add(shortMoves.Substring(p1, i - p1));
+                p1 = i;
+            }
+        }
+
+        foreach (string identicalMove in shortMovesList)
+        {
+            longMoves += ShortToLongMovesMap.GetValueOrDefault(identicalMove, "");
+        }
+
+        return longMoves;
+    }
+
+
 
    
 
     protected override void OnInitialized()
     {
-        //InitializeGame();
+        InitializeGame();
     }
 
 
