@@ -1,10 +1,5 @@
-﻿using static System.Runtime.InteropServices.Marshalling.IIUnknownCacheStrategy;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Extensions.ObjectPool;
-using System.Collections;
-using System.Xml.Linq;
 
 namespace MOLS_Game.TreeClasses
 {
@@ -323,7 +318,130 @@ namespace MOLS_Game.TreeClasses
 
         }
 
+        // What Ivan said to do but returns extremely long paths (4000+)
+        public static string GetPermutationsWithHeuristic(string[] tiles)
+        {
+            if (tiles == null) throw new ArgumentNullException(nameof(tiles));
+            MOLSTree tree = new MOLSTree(tiles);
+            MOLSNode currentNode = tree.GetRoot();
+            HashSet<string> visited = new HashSet<string>();
 
+            int depth = 4;
+            while (true)
+            {
+                List<MOLSNode> nodesAtDepth = BreadthFirstSearchToDepth(currentNode, depth, visited);
+
+                if (nodesAtDepth.Count == 0)
+                {
+                    depth = 4;
+                    currentNode = tree.GetRoot();
+                    continue;
+                }
+
+                currentNode = nodesAtDepth.OrderBy(n => MOLSHeuristic(n.GetTiles())).First();
+
+                if (CheckIfMOLS(currentNode.GetTiles()))
+                    return currentNode.GetOverallPath();
+
+                depth += 4;
+            }
+        }
+
+        public static List<MOLSNode> BreadthFirstSearchToDepth(MOLSNode root, int depth, HashSet<string> visited)
+        {
+            Queue<MOLSNode> queue = new Queue<MOLSNode>();
+            List<MOLSNode> result = new List<MOLSNode>();
+
+            int nodesAtDesiredDepthCount = 0;
+
+            queue.Enqueue(root);
+            visited.Add(string.Join(",", root.GetTiles()));
+
+            while (queue.Count > 0)
+            {
+                MOLSNode node = queue.Dequeue();
+
+                if (node.GetOverallPath().Length == depth)
+                {
+                    result.Add(node);
+                    nodesAtDesiredDepthCount++;
+                }
+                else if (node.GetOverallPath().Length < depth)
+                {
+                    EnqueueNeighbors(node, visited, queue);
+                }
+            }
+
+            Console.WriteLine($"Total Nodes at Depth {depth}: {nodesAtDesiredDepthCount}" + " " + $"Total Unique Nodes Visited: {visited.Count}");
+
+            return result;
+        }
+
+        private static void EnqueueNeighbors(MOLSNode node, HashSet<string> visited, Queue<MOLSNode> queue)
+        {
+            string[] tiles = node.GetTiles();
+            string step = node.GetPath();
+
+            // Down
+            if (!"U".Equals(step))
+            {
+                string[] downNeighbor = GenerateDown(tiles);
+                if (downNeighbor != null)
+                {
+                    string key = string.Join(",", downNeighbor);
+                    if (visited.Add(key))
+                    {
+                        MOLSNode newNode = new MOLSNode(downNeighbor, "D", node);
+                        queue.Enqueue(newNode);
+                    }
+                }
+            }
+
+            // Up
+            if (!"D".Equals(step))
+            {
+                string[] upNeighbor = GenerateUp(tiles);
+                if (upNeighbor != null)
+                {
+                    string key = string.Join(",", upNeighbor);
+                    if (visited.Add(key))
+                    {
+                        MOLSNode newNode = new MOLSNode(upNeighbor, "U", node);
+                        queue.Enqueue(newNode);
+                    }
+                }
+            }
+
+            // Left
+            if (!"R".Equals(step))
+            {
+                string[] leftNeighbor = GenerateLeft(tiles);
+                if (leftNeighbor != null)
+                {
+                    string key = string.Join(",", leftNeighbor);
+                    if (visited.Add(key))
+                    {
+                        MOLSNode newNode = new MOLSNode(leftNeighbor, "L", node);
+                        queue.Enqueue(newNode);
+                    }
+                }
+            }
+
+            // Right
+            if (!"L".Equals(step))
+            {
+                string[] rightNeighbor = GenerateRight(tiles);
+                if (rightNeighbor != null)
+                {
+                    string key = string.Join(",", rightNeighbor);
+                    if (visited.Add(key))
+                    {
+                        MOLSNode newNode = new MOLSNode(rightNeighbor, "R", node);
+                        queue.Enqueue(newNode);
+                    }
+                }
+            }
+        }
 
 
         //USES A HEURISTIC. VERY FAST BUT GIVES A VERY LONG PATH
@@ -659,7 +777,6 @@ namespace MOLS_Game.TreeClasses
         }
 
 
-        
 
 
         //find path from 1 permutation to another. very old as it uses a dictionary instead of hashset
