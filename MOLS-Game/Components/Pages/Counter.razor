@@ -65,6 +65,7 @@
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.OptimizedH)">Find Solution (H+BFS)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.ReOptimizedH)">Find Solution (BFS+H)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifier)">Find Solution (DMOD)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>
 
@@ -140,6 +141,9 @@
                 break;
             case PathFindingType.ReOptimizedH:
                 path = TileEditor.GetPermutationsWithHeuristic(tiles);
+                break;
+            case PathFindingType.DepthModifier:
+                path = TileEditor.GetPermutationsDaniel(tiles);
                 break;
 
         }
@@ -285,7 +289,8 @@
         Swap,
         Heuristic,
         OptimizedH,
-        ReOptimizedH
+        ReOptimizedH,
+        DepthModifier
     }
 
 }
