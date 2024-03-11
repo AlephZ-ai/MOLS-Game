@@ -10,6 +10,7 @@
         private MOLSNode? right = null;
         private MOLSNode? parent = null;
         private string path = "";
+        private int priority = 0;
 
 
         public MOLSNode(string[] tiles)
@@ -25,6 +26,16 @@
             path = step;
             this.parent = parent;
         }
+        public MOLSNode(string[] tiles, string step, MOLSNode parent, int priority)
+        {
+            if (tiles == null) throw new ArgumentNullException(nameof(tiles));
+            this.tiles = tiles;
+            path = step;
+            this.parent = parent;
+            this.priority = priority;
+        }
+
+        public int GetPriority() { return priority; }
 
 
         public string GetOverallPath()
