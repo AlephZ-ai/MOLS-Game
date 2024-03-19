@@ -1,14 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using MOLS_Game.Components.Pages;
+using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace MOLS_Game.TreeClasses
 {
     public class MOLSGenerator
     {
         private HashSet<string[]> generatedMOLS = new HashSet<string[]>(new StringArrayEqualityComparer());
-        private const int TargetMOLSCount = 200;
+        private int[] solutionLengths = new int[400];
+        private int[] longMovesLengths = new int[400];
+        private const int TargetMOLSCount = 385;
 
         public string GenerateAndExportMOLS(string[] initialTiles)
         {
@@ -29,6 +34,34 @@ namespace MOLS_Game.TreeClasses
             Console.WriteLine("MOLS Checked: " + molsCheck);
             string json = JsonConvert.SerializeObject(generatedMOLS);
             string filePath = "MOLS.json";
+            File.WriteAllText(filePath, json);
+            return json;
+        }
+
+        public string SolutionSample(string[] initialTiles)
+        {
+            for (int i = 0; i < TargetMOLSCount; i++)
+            {
+                string[] tiles = TileEditor.RandomizeTiles(initialTiles);
+                string totalPath = TileEditor.GetPermutationsDaniel(tiles);
+                string longMoves = Counter.ShortToLongMoves(totalPath);
+                int longMovesCount = longMoves.Count(c => c == ',');
+                int length = totalPath.Length;
+                solutionLengths[i] = length;
+                longMovesLengths[i] = longMovesCount;
+                Console.WriteLine("Total Sampled: " + i);
+            }
+            string json = JsonConvert.SerializeObject(solutionLengths);
+            string json1 = ConvertToJson(longMovesLengths);
+            string filePath = "Lengths.json";
+            File.WriteAllText(filePath, json);
+            return json;
+        }
+
+        public string ConvertToJson(int[] array)
+        {
+            string json = JsonConvert.SerializeObject(array);
+            string filePath = "Longs.json";
             File.WriteAllText(filePath, json);
             return json;
         }

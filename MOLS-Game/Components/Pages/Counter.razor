@@ -68,6 +68,7 @@
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifier)">Find Solution (DMod)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="SampleAndSaveSolutions">Generate Soln Sample</button>
 
     </div>
 
@@ -123,6 +124,13 @@
         await JSRuntime.InvokeVoidAsync("saveAsFile", "MOLS.json", jsonMOLS);
     }
 
+    private async Task SampleAndSaveSolutions()
+    {
+        MOLSGenerator generator = new MOLSGenerator();
+        string jsonMOLS = generator.SolutionSample(tiles);
+        await JSRuntime.InvokeVoidAsync("saveAsFile", "Sample.json", jsonMOLS);
+    }
+
     private void FindPath(PathFindingType type)
     {
         switch (type)
@@ -153,7 +161,7 @@
 
 
 
-    public string ShortToLongMoves(string shortMoves)
+    public static string ShortToLongMoves(string shortMoves)
     {
         Dictionary<string, string> ShortToLongMovesMap = new Dictionary<string, string>
     {
@@ -290,7 +298,8 @@
         Heuristic,
         OptimizedH,
         XAhead,
-        DepthModifier
+        DepthModifier,
+        Sample
     }
 
 }
