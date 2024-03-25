@@ -7,12 +7,9 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 
-
-
 <h3>The MOLS Puzzle Game</h3>
 
 <div style="display: flex; align-items: start; gap: 20px;">
-
     <div style="display: flex; flex-direction: column; align-items:center; gap:20px">
         <div class="puzzle-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
             @for (int i = 0; i < 16; i++)
@@ -20,7 +17,7 @@
                 if (TileEditor.CheckIfMOLS(tiles))
                 {
                     <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: lightgreen">
-                        @tiles[i]
+                        <img src="@GetCardImagePath(tiles[i])" alt="@GetCardDescription(tiles[i])" style="width: 100%; height: 100%;" />
                     </div>
                 }
                 else
@@ -28,38 +25,28 @@
                     if (tiles[i] == "11")
                     {
                         <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black; background-color: gray">
-                            @tiles[i]
+                            <img src="@GetCardImagePath(tiles[i])" alt="@GetCardDescription(tiles[i])" style="width: 100%; height: 100%;" />
                         </div>
                     }
                     else
                     {
                         <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid black;">
-                            @tiles[i]
+                            <img src="@GetCardImagePath(tiles[i])" alt="@GetCardDescription(tiles[i])" style="width: 100%; height: 100%;" />
                         </div>
                     }
-
                 }
-
             }
         </div>
         <div style="width: 416px; height: 100px; display: flex; align-items: flex-start; justify-content: left; border: 1px solid black;word-wrap: break-word; overflow-wrap: break-word;">
-            
             <div style="word-wrap: break-word; overflow-wrap: break-word; width: 100%;">
                 @longPath
             </div>
-            
         </div>
     </div>
-    
+
     <div style="display: flex; flex-direction: column; align-items:center; gap:20px;">
-
-
-        
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onkeydown="KeyDown">Press to Use Arrow Keys</button>
-        <!-- <a href="/Permutations/@tableInfo/@emptyIndex" class="btn btn-outline-primary">Get Closest Permutations</a>-->
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="InitializeGame">Press to Randomize Tiles</button>
-        
-
 
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.BreadthFirst)">Find Solution (BFS)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>
@@ -69,22 +56,14 @@
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="SampleAndSaveSolutions">Generate Soln Sample</button>
-
     </div>
 
     <div style="width: 416px; height: 500px; display: flex; align-items: flex-start; justify-content: left; border: 1px solid black;">
         <div style="word-wrap: break-word; overflow-wrap: break-word; width: 100%;">
             @path
-
             <p>Length: @path.Length</p>
         </div>
     </div>
-
-
-
-    
-    
-
 </div>
 
 <script>
@@ -100,9 +79,8 @@
 
 @code {
     private string[] tiles = { "11", "22", "33", "44", "24", "13", "42", "31", "32", "41", "14", "23", "43", "34", "21", "12" };
-    //private string[] tiles = { "13", "42", "24", "31", "22", "33", "11", "44", "41", "14", "32", "23", "34", "21", "43", "12" };
-    public string tableInfo = "01020304050607080910111213141511"; // turn into starting permutation every time.
-    private int emptyIndex = 0; // Assuming the empty space starts at the top left
+    public string tableInfo = "01020304050607080910111213141511";
+    private int emptyIndex = 0;
     private string path = "";
     private string longPath = "";
 
@@ -145,7 +123,7 @@
                 path = TileEditor.GetPermutationsHeuristic(tiles);
                 break;
             case PathFindingType.OptimizedH:
-                path = TileEditor.GetPermutationsNewest(tiles,6);
+                path = TileEditor.GetPermutationsNewest(tiles, 6);
                 break;
             case PathFindingType.XAhead:
                 path = TileEditor.GetPermutationsIvan(tiles);
@@ -153,31 +131,28 @@
             case PathFindingType.DepthModifier:
                 path = TileEditor.GetPermutationsDaniel(tiles);
                 break;
-
         }
         longPath = ShortToLongMoves(path);
         GC.Collect();
     }
 
-
-
     public static string ShortToLongMoves(string shortMoves)
     {
         Dictionary<string, string> ShortToLongMovesMap = new Dictionary<string, string>
-    {
-        { "L", "h1, " },
-        { "LL", "h2, " },
-        { "LLL", "h3, " },
-        { "U", "v1, " },
-        { "UU", "v2, " },
-        { "UUU", "v3, " },
-        { "R", "h3, " },
-        { "RR", "h2, " },
-        { "RRR", "h1, " },
-        { "D", "v3, " },
-        { "DD", "v2, " },
-        { "DDD", "v1, " }
-    };
+        {
+            { "L", "h1, " },
+            { "LL", "h2, " },
+            { "LLL", "h3, " },
+            { "U", "v1, " },
+            { "UU", "v2, " },
+            { "UUU", "v3, " },
+            { "R", "h3, " },
+            { "RR", "h2, " },
+            { "RRR", "h1, " },
+            { "D", "v3, " },
+            { "DD", "v2, " },
+            { "DDD", "v1, " }
+        };
 
         string longMoves = "";
         List<string> shortMovesList = new List<string>();
@@ -200,40 +175,29 @@
         return longMoves;
     }
 
-
-
-   
-
     protected override void OnInitialized()
     {
         InitializeGame();
     }
 
-
     private void InitializeGame()
     {
         var rng = new Random();
-        rng.Shuffle(tiles); //use this to shuffle for a shuffle button as well
-        emptyIndex = Array.IndexOf(tiles,"11");
-        
+        rng.Shuffle(tiles);
+        emptyIndex = Array.IndexOf(tiles, "11");
     }
-
-
 
     private void MoveUp()
     {
-        // Implement logic to move the empty space up, if possible
-        if (emptyIndex > 3) // Check if not in the top row
+        if (emptyIndex > 3)
         {
             SwapTiles(emptyIndex, emptyIndex - 4);
         }
-
     }
 
     private void MoveDown()
     {
-        // Implement logic to move the empty space down, if possible
-        if (emptyIndex < 12) // Check if not in the bottom row
+        if (emptyIndex < 12)
         {
             SwapTiles(emptyIndex, emptyIndex + 4);
         }
@@ -241,9 +205,7 @@
 
     private void MoveLeft()
     {
-       
-        
-        if (emptyIndex % 4 != 0) // check if not in the first column
+        if (emptyIndex % 4 != 0)
         {
             SwapTiles(emptyIndex, emptyIndex - 1);
         }
@@ -251,7 +213,7 @@
 
     private void MoveRight()
     {
-        if (emptyIndex % 4 != 3) // check if not in the last column
+        if (emptyIndex % 4 != 3)
         {
             SwapTiles(emptyIndex, emptyIndex + 1);
         }
@@ -262,34 +224,73 @@
         var temp = tiles[index1];
         tiles[index1] = tiles[index2];
         tiles[index2] = temp;
-        emptyIndex = index2; 
-
+        emptyIndex = index2;
 
         tableInfo = "";
-        foreach(string t in tiles)
+        foreach (string t in tiles)
         {
             tableInfo += t;
         }
-        StateHasChanged(); // Re-render the component
+        StateHasChanged();
     }
 
     private void KeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
     {
-        if(args.Key == "ArrowDown")
+        if (args.Key == "ArrowDown")
         {
             MoveDown();
-        } else if(args.Key == "ArrowUp")
+        }
+        else if (args.Key == "ArrowUp")
         {
             MoveUp();
-        } else if(args.Key == "ArrowLeft")
+        }
+        else if (args.Key == "ArrowLeft")
         {
             MoveLeft();
-        } else if(args.Key == "ArrowRight")
+        }
+        else if (args.Key == "ArrowRight")
         {
             MoveRight();
         }
     }
 
+    private string GetCardImagePath(string tile)
+    {
+        string suit = GetSuit(tile[0]);
+        string rank = GetRank(tile[1]);
+        return $"images/cards/{suit}_{rank}.png";
+    }
+
+    private string GetCardDescription(string tile)
+    {
+        string suit = GetSuit(tile[0]);
+        string rank = GetRank(tile[1]);
+        return $"{rank} of {suit}";
+    }
+
+    private string GetSuit(char suitChar)
+    {
+        return suitChar switch
+        {
+            '1' => "hearts",
+            '2' => "diamonds",
+            '3' => "clubs",
+            '4' => "spades",
+            _ => throw new ArgumentException("Invalid suit character."),
+        };
+    }
+
+    private string GetRank(char rankChar)
+    {
+        return rankChar switch
+        {
+            '1' => "ace",
+            '2' => "jack",
+            '3' => "queen",
+            '4' => "king",
+            _ => throw new ArgumentException("Invalid rank character."),
+        };
+    }
 
     public enum PathFindingType
     {
@@ -301,5 +302,4 @@
         DepthModifier,
         Sample
     }
-
 }
