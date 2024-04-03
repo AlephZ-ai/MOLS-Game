@@ -181,6 +181,190 @@ namespace MOLS_Game.TreeClasses
             return heuristicScore; //returns lower score when it is closer to mols
         }
 
+
+
+        //heuristic 2:
+        public static int MOLSHeuristic2(string[] tiles)
+        {
+
+            int heuristicScore = 0;
+
+            for (int i = 0; i < 4; i++)
+            {
+                HashSet<char> uniqueRowFirstDigits = new HashSet<char>();
+                HashSet<char> uniqueColumnFirstDigits = new HashSet<char>();
+                HashSet<char> uniqueRowSecondDigits = new HashSet<char>();
+                HashSet<char> uniqueColumnSecondDigits = new HashSet<char>();
+
+                for (int j = 0; j < 4; j++)
+                {
+                    string rowTile = tiles[i * 4 + j];
+                    string columnTile = tiles[j * 4 + i];
+
+                    if(!uniqueRowFirstDigits.Add(rowTile[0]) || !uniqueRowSecondDigits.Add(rowTile[1]))
+                    {
+                        heuristicScore++;
+                    }
+                    if(!uniqueColumnFirstDigits.Add(columnTile[0]) || !uniqueColumnSecondDigits.Add(columnTile[1]))
+                    {
+                        heuristicScore++;
+                    }
+
+                    
+                    
+                }
+
+            }
+
+            return heuristicScore; //returns lower score when it is closer to mols
+        }
+
+        public static string GetPermutationsDaniel2(string[] tiles1)
+        {
+
+
+            HashSet<string> checkedSet = new HashSet<string>();
+
+            MOLSTree? tree = new MOLSTree(tiles1);
+
+            PriorityQueue<MOLSNode, int> queue = new PriorityQueue<MOLSNode, int>();
+
+            queue.Enqueue(tree.GetRoot(), MOLSHeuristic(tiles1));
+
+            int n = 0;
+            Stopwatch stopwatch1 = new Stopwatch();
+            stopwatch1.Start();
+            while (queue.Count != 0)
+            {
+
+
+                MOLSNode node = queue.Dequeue();
+                int priority = node.GetPriority();
+                string[] tiles = node.GetTiles();
+                string step = node.GetPath();
+
+
+
+
+                //check if mols
+                if (CheckIfMOLS(tiles))
+                {
+                    return node.GetOverallPath();
+                }
+
+                //start of for console
+                n++;
+                if (n % 100000 == 0)
+                {
+                    GC.Collect();
+                    Console.WriteLine("n: " + n + " Step: " + node.GetOverallPath().Length + " Time: " + stopwatch1.ElapsedMilliseconds + " QueueCount: " + queue.Count + " SetCount: " + checkedSet.Count);
+                    stopwatch1.Restart();
+
+
+                }
+                //end of for console
+
+
+
+                int modifier = node.GetOverallPath().Length / 3;
+
+
+
+
+                //start of generation
+                if (!"U".Equals(step))
+                {
+
+                    string[] downNeighbor = GenerateDown(tiles);
+
+
+                    if (downNeighbor != null)
+                    {
+                        string downNeighborJoined = string.Join(",", downNeighbor);
+                        if (!checkedSet.Contains(downNeighborJoined))
+                        {
+                            int p = modifier * MOLSHeuristic2(downNeighbor);
+                            checkedSet.Add(downNeighborJoined);
+                            node.SetDown(new MOLSNode(downNeighbor, "D", node, p));
+                            queue.Enqueue(node.GetDown(), p);
+                        }
+
+                    }
+                }
+
+                if (!"D".Equals(step))
+                {
+
+
+                    string[] upNeighbor = GenerateUp(tiles);
+
+
+                    if (upNeighbor != null)
+                    {
+                        string upNeighborJoined = string.Join(",", upNeighbor);
+                        if (!checkedSet.Contains(upNeighborJoined))
+                        {
+                            int p = modifier * MOLSHeuristic2(upNeighbor);
+                            checkedSet.Add(upNeighborJoined);
+                            node.SetUp(new MOLSNode(upNeighbor, "U", node, p));
+                            queue.Enqueue(node.GetUp(), p);
+                        }
+
+                    }
+                }
+
+                if (!"R".Equals(step))
+                {
+
+
+                    string[] leftNeighbor = GenerateLeft(tiles);
+
+
+                    if (leftNeighbor != null)
+                    {
+                        string leftNeighborJoined = string.Join(",", leftNeighbor);
+                        if (!checkedSet.Contains(leftNeighborJoined))
+                        {
+                            int p = modifier * MOLSHeuristic2(leftNeighbor);
+                            checkedSet.Add(leftNeighborJoined);
+                            node.SetLeft(new MOLSNode(leftNeighbor, "L", node, p));
+                            queue.Enqueue(node.GetLeft(), p);
+                        }
+
+                    }
+                }
+
+                if (!"L".Equals(step))
+                {
+                    string[] rightNeighbor = GenerateRight(tiles);
+
+
+                    if (rightNeighbor != null)
+                    {
+                        string rightNeighborJoined = string.Join(",", rightNeighbor);
+                        if (!checkedSet.Contains(rightNeighborJoined))
+                        {
+                            int p = modifier * MOLSHeuristic2(rightNeighbor);
+                            checkedSet.Add(rightNeighborJoined);
+                            node.SetRight(new MOLSNode(rightNeighbor, "R", node, p));
+                            queue.Enqueue(node.GetRight(), p);
+                        }
+
+                    }
+                }
+
+                //end of generation
+
+
+
+
+            }
+            return "No MOLS";
+
+
+        }
+
+
         //idea I just wanted to try:
 
         public static string GetPermutationsDaniel(string[] tiles1)
@@ -327,6 +511,22 @@ namespace MOLS_Game.TreeClasses
 
 
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         //USES BREADTH FIRST SEARCH. TAKES AWHILE AND ONLY GOES 21~22 steps. 
@@ -726,11 +926,6 @@ namespace MOLS_Game.TreeClasses
         }
 
 
-
-       /* public static string GetPermutationsNewest(string tiles1)
-        {
-
-        } */
 
         //combination of breadth first search and heuristic to get what we are looking for. Maybe try IDA* or A* next time?
         public static string GetPermutationsNewest(string[] tiles1,int accuracy)

@@ -63,10 +63,12 @@
 
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.BreadthFirst)">Find Solution (BFS)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.OptimizedH)">Find Solution (H+BFS)</button>
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.ReOptimizedH)">Find Solution (BFS+H)</button>
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.OptimizedH)">Find Solution (H+BFS)</button>-->
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.ReOptimizedH)">Find Solution (BFS+H)</button>-->
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifier)">Find Solution (DMOD)</button>
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifierNewHeuristic)">Find Solution (DMODNH)</button>
+
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>-->
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>
 
     </div>
@@ -144,6 +146,9 @@
                 break;
             case PathFindingType.DepthModifier:
                 path = TileEditor.GetPermutationsDaniel(tiles);
+                break;
+            case PathFindingType.DepthModifierNewHeuristic:
+                path = TileEditor.GetPermutationsDaniel2(tiles);
                 break;
 
         }
@@ -290,7 +295,8 @@
         Heuristic,
         OptimizedH,
         ReOptimizedH,
-        DepthModifier
+        DepthModifier,
+        DepthModifierNewHeuristic
     }
 
 }
