@@ -230,7 +230,7 @@ namespace MOLS_Game.TreeClasses
 
             PriorityQueue<MOLSNode, int> queue = new PriorityQueue<MOLSNode, int>();
 
-            queue.Enqueue(tree.GetRoot(), MOLSHeuristic(tiles1));
+            queue.Enqueue(tree.GetRoot(), MOLSHeuristic2(tiles1));
 
             int n = 0;
             Stopwatch stopwatch1 = new Stopwatch();
