@@ -67,10 +67,12 @@
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.ReOptimizedH)">Find Solution (BFS+H)</button>-->
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifier)">Find Solution (DMOD)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifierNewHeuristic)">Find Solution (DMODNH)</button>
+        
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.EvaluateHeuristicAtFrontier)">Evaluate H (19Depth)</button>
 
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>-->
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>
-
+        
     </div>
 
     <div style="width: 416px; height: 500px; display: flex; align-items: flex-start; justify-content: left; border: 1px solid black;">
@@ -78,9 +80,11 @@
             @path
 
             <p>Length: @path.Length</p>
+
+            <p>Heuristic: @heuristic</p>
         </div>
     </div>
-
+    
 
 
     
@@ -106,6 +110,8 @@
     private int emptyIndex = 0; // Assuming the empty space starts at the top left
     private string path = "";
     private string longPath = "";
+
+    private int heuristic = 999;
 
     async Task RunJobAsync(PathFindingType type)
     {
@@ -149,6 +155,9 @@
                 break;
             case PathFindingType.DepthModifierNewHeuristic:
                 path = TileEditor.GetPermutationsDaniel2(tiles);
+                break;
+            case PathFindingType.EvaluateHeuristicAtFrontier:
+                path = TileEditor.EvaluateHeuristicOfNodesAtFrontier(tiles);
                 break;
 
         }
@@ -212,6 +221,7 @@
         var rng = new Random();
         rng.Shuffle(tiles); //use this to shuffle for a shuffle button as well
         emptyIndex = Array.IndexOf(tiles,"11");
+        heuristic = TileEditor.MOLSHeuristic(tiles);
         
     }
 
@@ -234,6 +244,7 @@
         {
             SwapTiles(emptyIndex, emptyIndex + 4);
         }
+
     }
 
     private void MoveLeft()
@@ -267,6 +278,7 @@
         {
             tableInfo += t;
         }
+        heuristic = TileEditor.MOLSHeuristic(tiles);
         StateHasChanged(); // Re-render the component
     }
 
@@ -296,7 +308,8 @@
         OptimizedH,
         ReOptimizedH,
         DepthModifier,
-        DepthModifierNewHeuristic
+        DepthModifierNewHeuristic,
+        EvaluateHeuristicAtFrontier
     }
 
 }
