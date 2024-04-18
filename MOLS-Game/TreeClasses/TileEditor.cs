@@ -877,6 +877,9 @@ namespace MOLS_Game.TreeClasses
             }
         }
 
+
+
+
         public static List<MOLSNode> BreadthFirstSearchToDepth(MOLSNode root, int depth, HashSet<string> visited)
         {
             Queue<MOLSNode> queue = new Queue<MOLSNode>();
@@ -1109,6 +1112,146 @@ namespace MOLS_Game.TreeClasses
 
 
         }
+
+
+        public static string GetPermutationsHeuristicInput(string[] tiles1,int heuristicGoal)
+        {
+
+
+            int n = 0;
+
+            HashSet<string> checkedSet = new HashSet<string>();
+            //Dictionary<string[], bool> checkedDict = new Dictionary<string[], bool>();
+
+
+            if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
+            MOLSTree? tree = new MOLSTree(tiles1);
+
+            PriorityQueue<MOLSNode, int> queue = new PriorityQueue<MOLSNode, int>();
+
+            queue.Enqueue(tree.GetRoot(), MOLSHeuristic(tiles1));
+
+            Stopwatch stopwatch1 = Stopwatch.StartNew();
+
+            while (queue.Count != 0)
+            {
+
+                MOLSNode node = queue.Dequeue();
+                string[] tiles = node.GetTiles();
+                string step = node.GetPath();
+
+
+                //start of for console
+                n++;
+
+                if (n == 100000)
+                {
+                    n = 0;
+                    Console.WriteLine("Step: " + node.GetOverallPath().Length + " Time: " + stopwatch1.ElapsedMilliseconds + " QueueCount: " + queue.Count + " SetCount: " + checkedSet.Count);
+                    stopwatch1.Restart();
+
+
+                }
+                //end of for console
+
+                //check if mos_goal
+                if (MOLSHeuristic(tiles) == heuristicGoal)
+                {
+                    return node.GetOverallPath();
+                }
+
+
+                //start of generation
+                if (!"U".Equals(step))
+                {
+
+                    string[] downNeighbor = GenerateDown(tiles);
+
+
+                    if (downNeighbor != null)
+                    {
+                        string downNeighborJoined = string.Join(",", downNeighbor);
+                        if (!checkedSet.Contains(downNeighborJoined))
+                        {
+                            checkedSet.Add(downNeighborJoined);
+                            node.SetDown(new MOLSNode(downNeighbor, "D", node));
+                            queue.Enqueue(node.GetDown(), MOLSHeuristic(downNeighbor));
+                        }
+
+                    }
+                }
+
+                if (!"D".Equals(step))
+                {
+
+
+                    string[] upNeighbor = GenerateUp(tiles);
+
+
+                    if (upNeighbor != null)
+                    {
+                        string upNeighborJoined = string.Join(",", upNeighbor);
+                        if (!checkedSet.Contains(upNeighborJoined))
+                        {
+                            checkedSet.Add(upNeighborJoined);
+                            node.SetUp(new MOLSNode(upNeighbor, "U", node));
+                            queue.Enqueue(node.GetUp(), MOLSHeuristic(upNeighbor));
+                        }
+
+                    }
+                }
+
+                if (!"R".Equals(step))
+                {
+
+
+                    string[] leftNeighbor = GenerateLeft(tiles);
+
+
+                    if (leftNeighbor != null)
+                    {
+                        string leftNeighborJoined = string.Join(",", leftNeighbor);
+                        if (!checkedSet.Contains(leftNeighborJoined))
+                        {
+                            checkedSet.Add(leftNeighborJoined);
+                            node.SetLeft(new MOLSNode(leftNeighbor, "L", node));
+                            queue.Enqueue(node.GetLeft(), MOLSHeuristic(leftNeighbor));
+                        }
+
+                    }
+                }
+
+                if (!"L".Equals(step))
+                {
+                    string[] rightNeighbor = GenerateRight(tiles);
+
+
+                    if (rightNeighbor != null)
+                    {
+                        string rightNeighborJoined = string.Join(",", rightNeighbor);
+                        if (!checkedSet.Contains(rightNeighborJoined))
+                        {
+                            checkedSet.Add(rightNeighborJoined);
+                            node.SetRight(new MOLSNode(rightNeighbor, "R", node));
+                            queue.Enqueue(node.GetRight(), MOLSHeuristic(rightNeighbor));
+                        }
+
+                    }
+                }
+
+                //end of generation
+
+
+
+            }
+            return "No MOLS";
+
+
+        }
+
+
+
+
 
 
 

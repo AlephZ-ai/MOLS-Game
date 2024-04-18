@@ -67,8 +67,9 @@
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.ReOptimizedH)">Find Solution (BFS+H)</button>-->
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifier)">Find Solution (DMOD)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifierNewHeuristic)">Find Solution (DMODNH)</button>
-        
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.EvaluateHeuristicAtFrontier)">Evaluate H (19Depth)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.HeuristicEquals4)">H (MOS4)</button>
+
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.EvaluateHeuristicAtFrontier)">Evaluate H (Depth)</button>
 
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>-->
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>
@@ -161,6 +162,10 @@
             case PathFindingType.EvaluateHeuristicAtFrontier:
                 path = TileEditor.EvaluateHeuristicOfNodesAtFrontier(tiles);
                 break;
+            case PathFindingType.HeuristicEquals4:
+                path = TileEditor.GetPermutationsHeuristicInput(tiles, 4);
+                break;
+
 
         }
         longPath = ShortToLongMoves(path);
@@ -314,7 +319,8 @@
         ReOptimizedH,
         DepthModifier,
         DepthModifierNewHeuristic,
-        EvaluateHeuristicAtFrontier
+        EvaluateHeuristicAtFrontier,
+        HeuristicEquals4
     }
 
 }
