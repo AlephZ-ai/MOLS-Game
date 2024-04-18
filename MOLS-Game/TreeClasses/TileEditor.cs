@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace MOLS_Game.TreeClasses
 {
@@ -526,60 +527,42 @@ namespace MOLS_Game.TreeClasses
 
         public static string EvaluateHeuristicOfNodesAtFrontier(string[] tiles)
         {
-            Queue<MOLSNode> queue = GetPermutationsBreadthFirstSearchDepth(tiles, 21);
+            Dictionary<int,int> coincidences = GetPermutationsBreadthFirstSearchDepth(tiles, 21);
+            string output = "";
 
-            double total = (double) queue.Count;
-            int n0=0,n3=0, n4=0, n5=0, n6=0, n7 = 0,other=0;
-
-            
-
-            foreach (MOLSNode item in queue)
+            double total = 0;
+            foreach(KeyValuePair<int,int> element in coincidences)
             {
-                int h = MOLSHeuristic(item.GetTiles());
+                total+= element.Value;
 
-                switch (h)
-                {
-                    case 0:
-                        n0++;
-                        break;
-                    case 3: 
-                        n3++; 
-                        break;
-                    case 4: 
-                        n4++; 
-                        break;
-                    case 5: 
-                        n5++; 
-                        break;
-                    case 6: 
-                        n6++; 
-                        break;
-                    case 7: 
-                        n7++; 
-                        break;
-
-                    default:
-                        other++;
-                        break;
-                }
-               
             }
-            
-            return "Total Leaf Count: " + total + "\nMOLS Found: " + n0 +
-                "\nMOS_3 Count: "+ n3 +"\nMOS_4 Count: "+ n4 + "\nMOS_5 Count: "+ n5 + "\nMOS_6 Count: "+ n6 + " \n MOS_7 Count: "+ n5 + "\nMOLS Percent: " + n0/total +"\n Other Count: " +other + "\nMOS_3 Percent: "+n3/total+ "\nMOS_4 Percent: "+n4/total+
-                "\nMOS_5 Percent: "+n5/total+ "\nMOS_6 Percent: "+n6/total+ "\n MOS_7 Percent: "+n3/total + "\nOther Percent: " + other/total;
+
+            foreach (KeyValuePair<int, int> element in coincidences)
+            {
+                int heuristicValue = element.Key;
+                int count = element.Value;
+
+                if (heuristicValue <= 12)
+                {
+                    output += "MOS_" + heuristicValue + ": " + (((double)count) / total * 100).ToString("0.00") + "%   \n";
+
+                }
+            }
+
+            return output;
+
         }
 
 
-        // BFS that will return at pathlenght of 18-19 the heuristic
-        public static Queue<MOLSNode> GetPermutationsBreadthFirstSearchDepth(string[] tiles1,int depth)
+        
+        public static Dictionary<int,int> GetPermutationsBreadthFirstSearchDepth(string[] tiles1,int depth)
         {
+
+            Dictionary<int,int> output = new Dictionary<int,int>();
 
             int n = 0;
 
             HashSet<string> checkedSet = new HashSet<string>();
-            //Dictionary<string[], bool> checkedDict = new Dictionary<string[], bool>();
-
 
             if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
             MOLSTree? tree = new MOLSTree(tiles1);
@@ -596,6 +579,7 @@ namespace MOLS_Game.TreeClasses
                 MOLSNode node = queue.Dequeue();
                 string[] tiles = node.GetTiles();
                 string step = node.GetPath();
+                
 
 
                 //start of for console
@@ -609,16 +593,15 @@ namespace MOLS_Game.TreeClasses
 
 
 
-
                 }
                 //end of for console
 
                 //check if mols
-                if (CheckIfMOLS(tiles) || node.GetOverallPath().Length >= depth) //maybe put this second condition in the if statement above
+                if (node.GetOverallPath().Length >= depth) //maybe put this second condition in the if statement above
                 {
 
 
-                    return queue;
+                    return output;
                 }
 
 
@@ -637,6 +620,11 @@ namespace MOLS_Game.TreeClasses
                             checkedSet.Add(downNeighborJoined);
                             node.SetDown(new MOLSNode(downNeighbor, "D", node));
                             queue.Enqueue(node.GetDown());
+
+
+                            int heuristic = MOLSHeuristic(node.GetDown().GetTiles());
+                            output[heuristic] = output.GetValueOrDefault(heuristic, 0) + 1;
+
                         }
 
                     }
@@ -657,6 +645,9 @@ namespace MOLS_Game.TreeClasses
                             checkedSet.Add(upNeighborJoined);
                             node.SetUp(new MOLSNode(upNeighbor, "U", node));
                             queue.Enqueue(node.GetUp());
+
+                            int heuristic = MOLSHeuristic(node.GetUp().GetTiles());
+                            output[heuristic] = output.GetValueOrDefault(heuristic, 0) + 1;
                         }
 
                     }
@@ -677,6 +668,9 @@ namespace MOLS_Game.TreeClasses
                             checkedSet.Add(leftNeighborJoined);
                             node.SetLeft(new MOLSNode(leftNeighbor, "L", node));
                             queue.Enqueue(node.GetLeft());
+
+                            int heuristic = MOLSHeuristic(node.GetLeft().GetTiles());
+                            output[heuristic] = output.GetValueOrDefault(heuristic, 0) + 1;
                         }
 
                     }
@@ -695,6 +689,9 @@ namespace MOLS_Game.TreeClasses
                             checkedSet.Add(rightNeighborJoined);
                             node.SetRight(new MOLSNode(rightNeighbor, "R", node));
                             queue.Enqueue(node.GetRight());
+
+                            int heuristic = MOLSHeuristic(node.GetRight().GetTiles());
+                            output[heuristic] = output.GetValueOrDefault(heuristic, 0) + 1;
                         }
 
                     }
@@ -705,7 +702,7 @@ namespace MOLS_Game.TreeClasses
 
 
             }
-            return queue;
+            return output;
 
 
         }
