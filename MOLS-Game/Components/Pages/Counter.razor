@@ -3,6 +3,7 @@
 @using System
 @using MOLS_Game.TreeClasses
 @using System.Diagnostics;
+@using MOLS_Game.LongBFS;
 
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
@@ -62,17 +63,21 @@
 
 
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.BreadthFirst)">Find Solution (BFS)</button>
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>
-        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.OptimizedH)">Find Solution (H+BFS)</button>-->
-        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.ReOptimizedH)">Find Solution (BFS+H)</button>-->
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifier)">Find Solution (DMOD)</button>
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifierNewHeuristic)">Find Solution (DMODNH)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.BFSLongMoves)">Find Solution (BFSLong)</button>
+
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.HeuristicEquals4)">H (MOS4)</button>
 
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.EvaluateHeuristicAtFrontier)">Evaluate H (Depth)</button>
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.OptimizedH)">Find Solution (H+BFS)</button>-->
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.ReOptimizedH)">Find Solution (BFS+H)</button>-->
+        
+
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.EvaluateHeuristicAtFrontier)">Evaluate H (BFS)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.LongMovesH4)">Evaluate H (LongBFS)</button>
 
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>-->
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>-->
         
     </div>
 
@@ -164,6 +169,12 @@
                 break;
             case PathFindingType.HeuristicEquals4:
                 path = TileEditor.GetPermutationsHeuristicInput(tiles, 4);
+                break;
+            case PathFindingType.LongMovesH4:
+                path = LongEditor.EvaluateHeuristicWithLongMoves(tiles);
+                break;
+            case PathFindingType.BFSLongMoves:
+                path = LongEditor.FindMOLSWithLongMoves(tiles);
                 break;
 
 
@@ -320,7 +331,9 @@
         DepthModifier,
         DepthModifierNewHeuristic,
         EvaluateHeuristicAtFrontier,
-        HeuristicEquals4
+        HeuristicEquals4,
+        LongMovesH4,
+        BFSLongMoves
     }
 
 }
