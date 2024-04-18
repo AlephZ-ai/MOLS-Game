@@ -190,7 +190,7 @@ namespace MOLS_Game.LongBFS
 
         public static string EvaluateHeuristicWithLongMoves(string[] tiles)
         {
-            Dictionary<int, int> coincidences = GenerateBFSWithLongMoves(tiles, 15);
+            Dictionary<int, int> coincidences = GenerateBFSWithLongMoves(tiles, 14);
             string output = "";
 
             double total = 0;
@@ -207,7 +207,7 @@ namespace MOLS_Game.LongBFS
 
                 if (heuristicValue <= 20)
                 {
-                    output += "MOS_" + heuristicValue + ": " + (((double)count) / total * 100).ToString("0.00") + "%   \n";
+                    output += "MOS_" + heuristicValue + ": " + ((count) ) + ",   \n";
 
                 }
             }
