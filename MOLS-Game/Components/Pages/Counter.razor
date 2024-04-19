@@ -66,19 +66,20 @@
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifier)">Find Solution (DMOD)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.BFSLongMoves)">Find Solution (BFSLong)</button>
 
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.HeuristicEquals4)">H (MOS4)</button>
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>-->
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.HeuristicEquals4)">H (MOS4)</button>-->
 
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.OptimizedH)">Find Solution (H+BFS)</button>-->
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.ReOptimizedH)">Find Solution (BFS+H)</button>-->
-        
-
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.EvaluateHeuristicAtFrontier)">Evaluate H (BFS)</button>
-        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.LongMovesH4)">Evaluate H (LongBFS)</button>
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.EvaluateHeuristicAtFrontier)">Evaluate H (BFS)</button>-->
+        <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.LongMovesH4)">Evaluate H (LongBFS)</button>-->
 
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Swap)">Press to Find Swap</button>-->
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOLS">Generate All MOLS</button>-->
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOS">Generate All MOS4</button>
         
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="GenerateAndSaveMOS4PathLengths">Gen PathLengths to MOS4</button>
+
     </div>
 
     <div style="width: 416px; height: 500px; display: flex; align-items: flex-start; justify-content: left; border: 1px solid black;">
@@ -139,6 +140,16 @@
         await JSRuntime.InvokeVoidAsync("saveAsFile", "MOLS.json", jsonMOLS);
     }
 
+    private async Task GenerateAndSaveMOS()
+    {
+        string jsonMOS = MOSGenerator.GenerateAndExportMOS(tiles);
+    } 
+
+    private async Task GenerateAndSaveMOS4PathLengths()
+    {
+        string jsonMOS = PathInfoGenerator.GenerateAndExportMOS4PathLengths(tiles);
+    } 
+
     private void FindPath(PathFindingType type)
     {
         switch (type)
@@ -168,13 +179,13 @@
                 path = TileEditor.EvaluateHeuristicOfNodesAtFrontier(tiles);
                 break;
             case PathFindingType.HeuristicEquals4:
-                path = TileEditor.GetPermutationsHeuristicInput(tiles, 4);
+                //path = TileEditor.GetPermutationsHeuristicInput(tiles, 4);
                 break;
             case PathFindingType.LongMovesH4:
                 path = LongEditor.EvaluateHeuristicWithLongMoves(tiles);
                 break;
             case PathFindingType.BFSLongMoves:
-                path = LongEditor.FindMOLSWithLongMoves(tiles,4,13); // tiles, target heuristic (0 for MOLS), DepthToAbandonSearch 
+                path = LongEditor.FindMOLSWithLongMoves(tiles,0,13); // tiles, target heuristic (0 for MOLS), DepthToAbandonSearch 
                 break;
 
 

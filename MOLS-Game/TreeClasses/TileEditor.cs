@@ -848,7 +848,7 @@ namespace MOLS_Game.TreeClasses
 
         }
 
-        // What Ivan said to do but returns extremely long paths (4000+)
+        // What Ivan said to do but returns extremely long paths (400+)
         public static string GetPermutationsWithHeuristic(string[] tiles)
         {
             if (tiles == null) throw new ArgumentNullException(nameof(tiles));
@@ -1114,7 +1114,7 @@ namespace MOLS_Game.TreeClasses
         }
 
 
-        public static string GetPermutationsHeuristicInput(string[] tiles1,int heuristicGoal)
+        public static string[] GetPermutationsHeuristicInput(string[] tiles1,int heuristicGoal)
         {
 
 
@@ -1157,7 +1157,7 @@ namespace MOLS_Game.TreeClasses
                 //check if mos_goal
                 if (MOLSHeuristic(tiles) == heuristicGoal)
                 {
-                    return node.GetOverallPath();
+                    return node.GetTiles();
                 }
 
 
@@ -1244,7 +1244,7 @@ namespace MOLS_Game.TreeClasses
 
 
             }
-            return "No MOLS";
+            return new string[1];
 
 
         }

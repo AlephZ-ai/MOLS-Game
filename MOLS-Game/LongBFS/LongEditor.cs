@@ -78,145 +78,7 @@ namespace MOLS_Game.LongBFS
 
 
         }
-
-
-
-        public static Dictionary<int,int> GenerateBFSWithLongMoves(string[] tiles1, int depth)
-        {
-            int e=0;
-
-            for(int i = 0; i < tiles1.Length;i++)
-            {
-                if (tiles1[i] == "11")
-                {
-                    e = i; break;
-                }
-            }
-
-            Dictionary<int, int> output = new Dictionary<int, int>();
-
-            int n = 0;
-
-            HashSet<string> checkedSet = new HashSet<string>();
-
-            if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
-            LongTree? tree = new LongTree(tiles1,e);
-
-            Queue<LongNode> queue = new Queue<LongNode>();
-
-            queue.Enqueue(tree.GetRoot());
-
-            Stopwatch stopwatch1 = Stopwatch.StartNew();
-
-            bool vertical = true;
-
-            while (queue.Count != 0)
-            {
-
-                LongNode node = queue.Dequeue();
-
-
-
-                //start of for console
-                n++;
-                if (n % 100000 == 0)
-                {
-                    int pathlength = node.GetOverallPath().Length;
-                    GC.Collect();
-                    Console.WriteLine("n: " + n + " Step: " + pathlength + " Time: " + stopwatch1.ElapsedMilliseconds + " QueueCount: " + queue.Count + " SetCount: " + checkedSet.Count);
-                    stopwatch1.Restart();
-
-
-
-                }
-                //end of for console
-
-                //return condition
-                if (node.GetOverallPath().Length >= depth) 
-                {
-                    return output;
-                }
-
-
-
-
-
-
-                vertical = !node.IsVertical;
-
-                if (vertical)
-                {
-                    for (int k = 1; k < 4; k++)
-                    {
-                        LongNode t = GenerateVerticalLongMove(node, k);
-
-                        string joined = string.Join(",", t.GetTiles());
-                        if (!checkedSet.Contains(joined))
-                        {
-                            checkedSet.Add(joined);
-                            queue.Enqueue(t); // I don't even think that I need to set a the parent to have a child. it is a reverse tree
-
-                            int heuristic = TileEditor.MOLSHeuristic(t.GetTiles());
-                            output[heuristic] = output.GetValueOrDefault(heuristic, 0) + 1;
-                        }
-                    }
-
-                } else
-                {
-                    for (int k = 1; k < 4; k++)
-                    {
-                        LongNode t = GenerateHorizontalLongMove(node, k);
-
-                        string joined = string.Join(",", t.GetTiles());
-                        if (!checkedSet.Contains(joined))
-                        {
-                            checkedSet.Add(joined);
-                            queue.Enqueue(t); // I don't even think that I need to set a the parent to have a child. it is a reverse tree
-
-                            int heuristic = TileEditor.MOLSHeuristic(t.GetTiles());
-                            output[heuristic] = output.GetValueOrDefault(heuristic, 0) + 1;
-                        }
-                    }
-                }
-
-                
-
-
-
-            }
-            return output;
-        }
-
-
-        public static string EvaluateHeuristicWithLongMoves(string[] tiles)
-        {
-            Dictionary<int, int> coincidences = GenerateBFSWithLongMoves(tiles, 14);
-            string output = "";
-
-            double total = 0;
-            foreach (KeyValuePair<int, int> element in coincidences)
-            {
-                total += element.Value;
-
-            }
-
-            foreach (KeyValuePair<int, int> element in coincidences)
-            {
-                int heuristicValue = element.Key;
-                int count = element.Value;
-
-                if (heuristicValue <= 20)
-                {
-                    output += "MOS_" + heuristicValue + ": " + ((count) ) + ",   \n";
-
-                }
-            }
-
-            return output;
-
-        }
-
-
+        
         public static string FindMOLSWithLongMoves(string[] tiles1, int target, int maxDepth)
         {
             int e = 0;
@@ -321,8 +183,32 @@ namespace MOLS_Game.LongBFS
 
 
             }
-            return "";
+            return "MOS_" + target + " not found within " + (maxDepth - 1) + " long moves."; 
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public static string FindMOLSWithLongMovesAlternating(string[] tiles1, int target, int maxDepth)
         {
@@ -430,6 +316,142 @@ namespace MOLS_Game.LongBFS
 
             }
             return "";
+        }
+
+        public static Dictionary<int, int> GenerateBFSWithLongMoves(string[] tiles1, int depth)
+        {
+            int e = 0;
+
+            for (int i = 0; i < tiles1.Length; i++)
+            {
+                if (tiles1[i] == "11")
+                {
+                    e = i; break;
+                }
+            }
+
+            Dictionary<int, int> output = new Dictionary<int, int>();
+
+            int n = 0;
+
+            HashSet<string> checkedSet = new HashSet<string>();
+
+            if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
+            LongTree? tree = new LongTree(tiles1, e);
+
+            Queue<LongNode> queue = new Queue<LongNode>();
+
+            queue.Enqueue(tree.GetRoot());
+
+            Stopwatch stopwatch1 = Stopwatch.StartNew();
+
+            bool vertical = true;
+
+            while (queue.Count != 0)
+            {
+
+                LongNode node = queue.Dequeue();
+
+
+
+                //start of for console
+                n++;
+                if (n % 100000 == 0)
+                {
+                    int pathlength = node.GetOverallPath().Length;
+                    GC.Collect();
+                    Console.WriteLine("n: " + n + " Step: " + pathlength + " Time: " + stopwatch1.ElapsedMilliseconds + " QueueCount: " + queue.Count + " SetCount: " + checkedSet.Count);
+                    stopwatch1.Restart();
+
+
+
+                }
+                //end of for console
+
+                //return condition
+                if (node.GetOverallPath().Length >= depth)
+                {
+                    return output;
+                }
+
+
+
+
+
+
+                vertical = !node.IsVertical;
+
+                if (vertical)
+                {
+                    for (int k = 1; k < 4; k++)
+                    {
+                        LongNode t = GenerateVerticalLongMove(node, k);
+
+                        string joined = string.Join(",", t.GetTiles());
+                        if (!checkedSet.Contains(joined))
+                        {
+                            checkedSet.Add(joined);
+                            queue.Enqueue(t); // I don't even think that I need to set a the parent to have a child. it is a reverse tree
+
+                            int heuristic = TileEditor.MOLSHeuristic(t.GetTiles());
+                            output[heuristic] = output.GetValueOrDefault(heuristic, 0) + 1;
+                        }
+                    }
+
+                }
+                else
+                {
+                    for (int k = 1; k < 4; k++)
+                    {
+                        LongNode t = GenerateHorizontalLongMove(node, k);
+
+                        string joined = string.Join(",", t.GetTiles());
+                        if (!checkedSet.Contains(joined))
+                        {
+                            checkedSet.Add(joined);
+                            queue.Enqueue(t); // I don't even think that I need to set a the parent to have a child. it is a reverse tree
+
+                            int heuristic = TileEditor.MOLSHeuristic(t.GetTiles());
+                            output[heuristic] = output.GetValueOrDefault(heuristic, 0) + 1;
+                        }
+                    }
+                }
+
+
+
+
+
+            }
+            return output;
+        }
+
+
+        public static string EvaluateHeuristicWithLongMoves(string[] tiles)
+        {
+            Dictionary<int, int> coincidences = GenerateBFSWithLongMoves(tiles, 14);
+            string output = "";
+
+            double total = 0;
+            foreach (KeyValuePair<int, int> element in coincidences)
+            {
+                total += element.Value;
+
+            }
+
+            foreach (KeyValuePair<int, int> element in coincidences)
+            {
+                int heuristicValue = element.Key;
+                int count = element.Value;
+
+                if (heuristicValue <= 20)
+                {
+                    output += "MOS_" + heuristicValue + ": " + ((count)) + ",   \n";
+
+                }
+            }
+
+            return output;
+
         }
 
 
