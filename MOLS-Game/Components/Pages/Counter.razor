@@ -174,7 +174,7 @@
                 path = LongEditor.EvaluateHeuristicWithLongMoves(tiles);
                 break;
             case PathFindingType.BFSLongMoves:
-                path = LongEditor.FindMOLSWithLongMoves(tiles);
+                path = LongEditor.FindMOLSWithLongMoves(tiles,4,13); // tiles, target heuristic (0 for MOLS), DepthToAbandonSearch 
                 break;
 
 
