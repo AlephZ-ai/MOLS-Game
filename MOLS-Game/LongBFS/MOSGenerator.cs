@@ -7,13 +7,13 @@ namespace MOLS_Game.LongBFS
 {
 
         private static HashSet<string> generatedMOS = new HashSet<string>();
-        private static int TargetMOSCount = 200;
+        private static int TargetMOSCount = 5000;
         private static readonly string filePath = "MOS_4.json";
 
         public static string GenerateAndExportMOS(string[] tiles)
         {
             LoadHashSet();
-            TargetMOSCount = generatedMOS.Count + 200;
+            TargetMOSCount = generatedMOS.Count + 5000;
             
             while (generatedMOS.Count < TargetMOSCount)
             {
