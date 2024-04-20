@@ -142,7 +142,13 @@
 
     private async Task GenerateAndSaveMOS()
     {
-        string jsonMOS = MOSGenerator.GenerateAndExportMOS(tiles);
+        bool done = true;
+        while (done)
+        {
+            done = false;
+            done = MOSGenerator.GenerateAndExportMOS(tiles);
+        }
+
     } 
 
     private async Task GenerateAndSaveMOS4PathLengths()

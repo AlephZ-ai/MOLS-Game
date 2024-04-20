@@ -10,7 +10,7 @@ namespace MOLS_Game.LongBFS
         private static int TargetMOSCount = 5000;
         private static readonly string filePath = "MOS_4.json";
 
-        public static string GenerateAndExportMOS(string[] tiles)
+        public static bool GenerateAndExportMOS(string[] tiles)
         {
             LoadHashSet();
             TargetMOSCount = generatedMOS.Count + 5000;
@@ -38,7 +38,7 @@ namespace MOLS_Game.LongBFS
             //File.WriteAllText(filePath, json);
 
             SaveHashSet();
-            return JsonConvert.SerializeObject(generatedMOS);
+            return true;
         }
 
         private static void LoadHashSet()
