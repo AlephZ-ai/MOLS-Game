@@ -10,11 +10,11 @@ namespace MOLS_Game.LongBFS
         private static int TargetMOSCount = 3; // if you change this make sure to change on line 16
         private static readonly string filePath = "LongMovesToMOS4List.json";
 
-        public static string GenerateAndExportMOS4PathLengths(string[] tiles)
+        public static bool GenerateAndExportMOS4PathLengths(string[] tiles)
         {
             LoadHashSet();
             TargetMOSCount = pathLengthList.Count + 3; //change this and the definition on line 10 if you want to afk
-            const int maxDepth = 12; //MAX you should change this to as high as your pc can handle
+            const int maxDepth = 15; //MAX you should change this to as high as your pc can handle
 
 
             while (pathLengthList.Count < TargetMOSCount)
@@ -41,7 +41,7 @@ namespace MOLS_Game.LongBFS
             
 
             SaveHashSet();
-            return JsonConvert.SerializeObject(pathLengthList);
+            return true;
         }
 
         private static void LoadHashSet()
