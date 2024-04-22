@@ -96,7 +96,6 @@ namespace MOLS_Game.LongBFS
 
             HashSet<string> checkedSet = new HashSet<string>();
 
-            if (tiles1 == null) throw new ArgumentNullException(nameof(tiles1));
             LongTree? tree = new LongTree(tiles1, e);
 
             Queue<LongNode> queue = new Queue<LongNode>();
@@ -188,6 +187,128 @@ namespace MOLS_Game.LongBFS
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public static string FindBranchingFactorLongMoves(string[] tiles1, int maxDepth)
+        {
+            int e = 0;
+
+            for (int i = 0; i < tiles1.Length; i++)
+            {
+                if (tiles1[i] == "11")
+                {
+                    e = i; break;
+                }
+            }
+
+
+            int n = 0;
+
+            HashSet<string> checkedSet = new HashSet<string>();
+
+            LongTree? tree = new LongTree(tiles1, e);
+
+            Queue<LongNode> queue = new Queue<LongNode>();
+
+            int[] output = new int[maxDepth]; //index will be pathlength and value will be # of branches
+
+            queue.Enqueue(tree.GetRoot());
+
+            Stopwatch stopwatch1 = Stopwatch.StartNew();
+
+            bool vertical;
+
+            while (queue.Count != 0)
+            {
+
+                LongNode node = queue.Dequeue();
+                int pathlength = node.GetOverallPath().Length / 2; //divided by 2 bec. each move has 2 chars
+
+
+                //start of for console
+                n++;
+                if (n % 100000 == 0)
+                {
+                    
+                    GC.Collect();
+                    Console.WriteLine("n: " + n + " Step: " + pathlength + " Time: " + stopwatch1.ElapsedMilliseconds + " QueueCount: " + queue.Count + " SetCount: " + checkedSet.Count);
+                    stopwatch1.Restart();
+
+
+
+                }
+                //end of for console
+
+                //return condition
+              
+                if (pathlength >= maxDepth)
+                {
+                    string result1 = string.Join(", ", output);
+                    Console.WriteLine(result1);
+                    return result1;
+                }
+
+
+                vertical = !node.IsVertical;
+
+                if (vertical || node.GetParent() == null) //generate vertical
+                {
+                    for (int k = 1; k < 4; k++)
+                    {
+                        LongNode t = GenerateVerticalLongMove(node, k);
+
+                        string joined = string.Join(",", t.GetTiles());
+                        if (!checkedSet.Contains(joined))
+                        {
+                            checkedSet.Add(joined);
+                            queue.Enqueue(t); 
+                            output[pathlength]++;
+
+                        }
+                    }
+
+                }
+                if (!vertical || node.GetParent() == null) //generate horizontal
+                {
+                    for (int k = 1; k < 4; k++)
+                    {
+                        LongNode t = GenerateHorizontalLongMove(node, k);
+
+                        string joined = string.Join(",", t.GetTiles());
+                        if (!checkedSet.Contains(joined))
+                        {
+                            checkedSet.Add(joined);
+                            queue.Enqueue(t);
+                            output[pathlength]++;
+                        }
+                    }
+                }
+
+
+
+
+
+            }
+            string result = string.Join(", ", output);
+            Console.WriteLine(result);
+            return result;
+        }
 
 
 

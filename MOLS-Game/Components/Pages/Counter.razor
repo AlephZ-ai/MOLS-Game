@@ -65,6 +65,7 @@
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.BreadthFirst)">Find Solution (BFS)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.DepthModifier)">Find Solution (DMOD)</button>
         <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.BFSLongMoves)">Find Solution (BFSLong)</button>
+        <button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.FindBranchingFactor)">Find Branching Factor</button>
 
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.Heuristic)">Find Solution (H)</button>-->
         <!--<button class="btn btn-outline-dark" style="width:210px; height:40px" @onclick="() => RunJobAsync(PathFindingType.HeuristicEquals4)">H (MOS4)</button>-->
@@ -160,7 +161,7 @@
             done = false;
             done = PathInfoGenerator.GenerateAndExportMOS4PathLengths(tiles);
         }
-        
+
     } 
 
     private void FindPath(PathFindingType type)
@@ -199,6 +200,9 @@
                 break;
             case PathFindingType.BFSLongMoves:
                 path = LongEditor.FindMOLSWithLongMoves(tiles,0,13); // tiles, target heuristic (0 for MOLS), DepthToAbandonSearch 
+                break;
+            case PathFindingType.FindBranchingFactor:
+                path = LongEditor.FindBranchingFactorLongMoves(tiles, 14);
                 break;
 
 
@@ -357,7 +361,8 @@
         EvaluateHeuristicAtFrontier,
         HeuristicEquals4,
         LongMovesH4,
-        BFSLongMoves
+        BFSLongMoves,
+        FindBranchingFactor
     }
 
 }
